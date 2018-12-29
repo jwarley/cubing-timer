@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as Util from './Util';
+import * as React from "react";
+import * as Util from "./Util";
 
 enum Penalty {
   DNF,
@@ -15,11 +15,11 @@ class ScoreCard extends React.Component<{ times: Time[] }, {}> {
   public render() {
     return (
       <div className="tc">
-          <ul>
-              {
-                 this.props.times.map(t => <li> { Util.timeToString(t.ms) } </li>) 
-              }
-          </ul>
+        <ul>
+          {this.props.times.map(t => (
+            <li> {Util.timeToString(t.ms)} </li>
+          ))}
+        </ul>
       </div>
     );
   }
