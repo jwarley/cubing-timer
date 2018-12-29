@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as Util from './Util';
-import ScrambleText from "./ScrambleText";
+import ScrambleText from './ScrambleText';
+import ScoreCard from './ScoreCard';
 
 type TimerPhase =
   | { name: "waiting" }
@@ -10,10 +11,21 @@ type TimerPhase =
   | { name: "running" }
   | { name: "stopped" };
 
+enum Penalty {
+  DNF,
+  PlusTwo,
+}
+
+interface Time {
+  ms: number;
+  pen?: Penalty;
+}
+
 interface TimerState {
   startTime: number;
   elapsed: number;
   phase: TimerPhase;
+  bucket: Time[];
 }
 
 class Timer extends React.Component<{}, TimerState> {
@@ -25,6 +37,7 @@ class Timer extends React.Component<{}, TimerState> {
       startTime: 0,
       elapsed: 0,
       phase: { name: "waiting" },
+      bucket: [],
     };
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -64,6 +77,7 @@ class Timer extends React.Component<{}, TimerState> {
           };
           break;
         case "running":
+          this.saveTime();
           nextState = {
             ...state,
             phase: { name: "stopped" }
@@ -178,6 +192,12 @@ class Timer extends React.Component<{}, TimerState> {
     );
   }
 
+  private saveTime(): void {
+    let newTime = { ms: this.state.elapsed };
+    this.state.bucket.push(newTime);
+    console.log(this.state.bucket);
+  }
+
   public render() {
     // Set the color of the timer
     let colorClass = "black";
@@ -204,6 +224,7 @@ class Timer extends React.Component<{}, TimerState> {
         <div className={"tc f1 code " + colorClass}>
           {timeString}
         </div>
+        <ScoreCard times={this.state.bucket} />
       </div>
     );
   }
