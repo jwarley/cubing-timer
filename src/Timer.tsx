@@ -3,6 +3,7 @@ import * as Util from "./Util";
 import { Time, Penalty } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
+import StatsCard from "./StatsCard";
 
 type TimerPhase =
   | { name: "waiting" }
@@ -223,7 +224,7 @@ class Timer extends React.Component<{}, Model> {
     return (
       <div className="flex items-start justify-between">
         <div className="flex flex-column vh-100 justify-between w-25 outline">
-          <div className="outline tc">Stats</div>
+          <StatsCard />
           <div className="outline tc">History</div>
         </div>
 

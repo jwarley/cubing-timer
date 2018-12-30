@@ -35,6 +35,7 @@ class ScoreCard extends React.Component<{ times: Time[] }, {}> {
 
     return (
       <div className="outline">
+        <h1 className="f5 center mw5">Current Average</h1>
         <ul className="list pl0 ml0 center mw5 ba b--light-silver br3">{rows}</ul>
       </div>
     );
