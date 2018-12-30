@@ -1,3 +1,5 @@
+import { Time, Penalty } from "./Types";
+
 // return the elapsed time since t
 function timeSince(t: number): number {
   return Date.now() - t;
@@ -49,12 +51,22 @@ function timeToString(time: number): string {
   return timeString;
 }
 
+// returns the penalty incurred by an inspection time
+function inspPenalty(time: number): Penalty | undefined {
+  let pen = undefined;
+  if (time >= 17000) {
+    pen = Penalty.DNF;
+  } else if (time >= 15000) {
+    pen = Penalty.PlusTwo;
+  }
+  return pen;
+}
+
 // pretty-print an ms value as an inspection time
 function toInspString(time: number): string {
   if (time >= 17000) {
     return "DNF";
-  }
-  if (time >= 15000) {
+  } else if (time >= 15000) {
     return "+2";
   }
 
@@ -62,4 +74,4 @@ function toInspString(time: number): string {
   return (15 - s).toString();
 }
 
-export { timeToString, timeSince, toInspString };
+export { timeToString, timeSince, inspPenalty, toInspString };

@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as Util from "./Util";
+import { Time, Penalty } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 
@@ -11,24 +12,15 @@ type TimerPhase =
   | { name: "running" }
   | { name: "stopped" };
 
-enum Penalty {
-  DNF,
-  PlusTwo,
-}
-
-interface Time {
-  ms: number;
-  pen?: Penalty;
-}
-
-interface TimerState {
+interface Model {
   startTime: number;
   elapsed: number;
   phase: TimerPhase;
+  penalty?: Penalty;
   bucket: Time[];
 }
 
-class Timer extends React.Component<{}, TimerState> {
+class Timer extends React.Component<{}, Model> {
   private intervalID: number;
 
   constructor(props: {}) {
@@ -37,6 +29,7 @@ class Timer extends React.Component<{}, TimerState> {
       startTime: 0,
       elapsed: 0,
       phase: { name: "waiting" },
+      penalty: undefined,
       bucket: [],
     };
 
@@ -62,12 +55,12 @@ class Timer extends React.Component<{}, TimerState> {
 
   private handleKeyDown(event: any) {
     this.setState((state, props) => {
-      let nextState: TimerState;
+      let nextState: Model;
       switch (state.phase.name) {
         case "inspecting":
           // only spacebar should ready the timer
           nextState =
-            event.code == "Space"
+            event.code === "Space"
               ? {
                   ...state,
                   phase: { name: "red", timeTurnedRed: Date.now() },
@@ -77,10 +70,13 @@ class Timer extends React.Component<{}, TimerState> {
                 };
           break;
         case "running":
-          this.saveTime();
+          let timeToSave = { ms: state.elapsed, pen: state.penalty };
+
           nextState = {
             ...state,
             phase: { name: "stopped" },
+            bucket: state.bucket.length >= 5 ? [timeToSave] : state.bucket.concat([timeToSave]),
+            // change this 5 later to the size of an avg for the event
           };
           break;
         default:
@@ -96,12 +92,12 @@ class Timer extends React.Component<{}, TimerState> {
 
   private handleKeyUp(event: any) {
     this.setState((state, props) => {
-      let nextState: TimerState;
+      let nextState: Model;
       switch (state.phase.name) {
         case "waiting":
           // only spacebar should start inspection
           nextState =
-            event.code == "Space"
+            event.code === "Space"
               ? {
                   ...state,
                   startTime: Date.now(),
@@ -114,7 +110,7 @@ class Timer extends React.Component<{}, TimerState> {
         case "red":
           // only lifting spacebar should return to inspection
           nextState =
-            event.code == "Space"
+            event.code === "Space"
               ? {
                   ...state,
                   phase: { name: "inspecting" },
@@ -126,7 +122,7 @@ class Timer extends React.Component<{}, TimerState> {
         case "green":
           // only spacebar should start the timer
           nextState =
-            event.code == "Space"
+            event.code === "Space"
               ? {
                   ...state,
                   startTime: Date.now(),
@@ -156,7 +152,7 @@ class Timer extends React.Component<{}, TimerState> {
 
   private tick() {
     this.setState((state, props) => {
-      let nextState: TimerState;
+      let nextState: Model;
 
       switch (state.phase.name) {
         case "red":
@@ -165,11 +161,13 @@ class Timer extends React.Component<{}, TimerState> {
               ...state,
               elapsed: Util.timeSince(state.startTime),
               phase: { name: "green" },
+              penalty: Util.inspPenalty(state.elapsed),
             };
           } else {
             nextState = {
               ...state,
               elapsed: Util.timeSince(state.startTime),
+              penalty: Util.inspPenalty(state.elapsed),
             };
           }
           break;
@@ -177,12 +175,14 @@ class Timer extends React.Component<{}, TimerState> {
           nextState = {
             ...state,
             elapsed: Util.timeSince(state.startTime),
+            penalty: Util.inspPenalty(state.elapsed),
           };
           break;
         case "green":
           nextState = {
             ...state,
             elapsed: Util.timeSince(state.startTime),
+            penalty: Util.inspPenalty(state.elapsed),
           };
           break;
         case "running":
@@ -197,12 +197,6 @@ class Timer extends React.Component<{}, TimerState> {
       }
       return nextState;
     });
-  }
-
-  private saveTime(): void {
-    let newTime = { ms: this.state.elapsed };
-    this.state.bucket.push(newTime);
-    console.log(this.state.bucket);
   }
 
   public render() {
@@ -227,10 +221,22 @@ class Timer extends React.Component<{}, TimerState> {
     }
 
     return (
-      <div className="">
-        <ScrambleText />
-        <div className={"tc f1 code " + colorClass}>{timeString}</div>
-        <ScoreCard times={this.state.bucket} />
+      <div className="flex items-start justify-between">
+        <div className="flex flex-column vh-100 justify-between w-25 outline">
+          <div className="outline tc">Stats</div>
+          <div className="outline tc">History</div>
+        </div>
+
+        <div className="flex flex-column justify-between vh-100 outline">
+          <ScrambleText />
+          <div className={"tc f1 code outline " + colorClass}>{timeString}</div>
+          <ScoreCard times={this.state.bucket} />
+        </div>
+
+        <div className="flex flex-column vh-100 justify-between w-25 outline">
+          <div className="outline tc"> Scramble image </div>
+          <div className="outline tc"> Settings </div>
+        </div>
       </div>
     );
   }
