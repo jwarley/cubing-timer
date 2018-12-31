@@ -20,7 +20,17 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <!-- <script src="tnoodle.js"></script> -->
+    <script>
+    window.TNOODLE_ENV = { "TNOODLE_333_MIN_DISTANCE": "1" };
+    </script>
+    <script id = "tnoodle" src="tnoodle.js"></script>
+    <script id = "ploaded">
+    function puzzlesLoaded(puzzles) {
+        window.puzzles = puzzles;
+    };
+    </script>
+
+    
 <!--     <script>
       function puzzlesLoaded(puzzles) {
         console.log("puzzlesloaded called");

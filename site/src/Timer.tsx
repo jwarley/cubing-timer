@@ -42,14 +42,11 @@ function getNewScramble(): Promise<string> {
     return promise;
 }
 
-async function loadScript(src: string): Promise<Boolean> {
-    return new Promise((resolve, reject) => {
-        var tag = document.createElement("script");
-        tag.async = false;
-        tag.src = src;
-        document.getElementsByTagName("head")[0].appendChild(tag);
-        resolve(true);
-    });
+async function setScramble(){
+    //Change this to actually set the scramble
+    let promise = getNewScramble();
+    let scramble = await promise;
+    console.log(scramble);
 }
 
 class Timer extends React.Component<{}, Model> {
@@ -69,41 +66,17 @@ class Timer extends React.Component<{}, Model> {
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
-
         this.intervalID = 0;
     }
 
     public async componentDidMount() {
-        // function puzzlesLoaded(puzzles: any) {
-        //     console.log("puzzlesloaded called");
-        //     window.puzzles = puzzles;
-        // }
-        const tnoodleLoaded = await loadScript("tnoodle.js");
-        const puzzlesLoaded = await loadScript("src/puzzlesLoaded.js");
-
-        this.setState({ scramble: "string from compenentdidmount" });
-
-        if (tnoodleLoaded && puzzlesLoaded) {
-            console.log("tnoodle loaded");
-            const scram = await getNewScramble();
-            this.setState({ scramble: scram });
-        } else {
-            console.log("spooky dooky");
-        }
+        this.setState({ scramble: "Loading..." });
+        //setScramble();
 
         this.intervalID = window.setInterval(() => this.tick(), 1);
 
         document.addEventListener("keydown", this.handleKeyDown);
         document.addEventListener("keyup", this.handleKeyUp);
-
-        // const promise = await getNewScramble();
-        // const scram = await promise;
-        // this.setState((state, props) => {
-        //     return {
-        //         ...state,
-        //         scramble: scram,
-        //     };
-        // });
     }
 
     public componentWillUnmount() {
@@ -205,7 +178,7 @@ class Timer extends React.Component<{}, Model> {
                                   ...state,
                               };
                     // cache the next scramble while the timer is running
-                    // let promise = getNewScramble();
+                    setScramble();
                     nextState.next_scramble = "HUKKKKAKAKAKAKAKA";
                     break;
                 case "stopped":
