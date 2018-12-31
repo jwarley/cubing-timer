@@ -42,13 +42,13 @@ function getNewScramble(): Promise<string> {
     return promise;
 }
 
-async function loadScript(src: string): Promise<HTMLScriptElement> {
+async function loadScript(src: string): Promise<Boolean> {
     return new Promise((resolve, reject) => {
         var tag = document.createElement("script");
         tag.async = false;
         tag.src = src;
-        var script = document.getElementsByTagName("head")[0].appendChild(tag);
-        resolve(script);
+        document.getElementsByTagName("head")[0].appendChild(tag);
+        resolve(true);
     });
 }
 
@@ -74,15 +74,22 @@ class Timer extends React.Component<{}, Model> {
     }
 
     public async componentDidMount() {
-        const scr = await loadScript("tnoodle.js");
-        function puzzlesLoaded(puzzles: any) {
-            console.log("puzzlesloaded called");
-            window.puzzles = puzzles;
-        }
+        // function puzzlesLoaded(puzzles: any) {
+        //     console.log("puzzlesloaded called");
+        //     window.puzzles = puzzles;
+        // }
+        const tnoodleLoaded = await loadScript("tnoodle.js");
+        const puzzlesLoaded = await loadScript("src/puzzlesLoaded.js");
 
         this.setState({ scramble: "string from compenentdidmount" });
-        const scram = await getNewScramble();
-        this.setState({ scramble: scram });
+
+        if (tnoodleLoaded && puzzlesLoaded) {
+            console.log("tnoodle loaded");
+            const scram = await getNewScramble();
+            this.setState({ scramble: scram });
+        } else {
+            console.log("spooky dooky");
+        }
 
         this.intervalID = window.setInterval(() => this.tick(), 1);
 
@@ -91,12 +98,12 @@ class Timer extends React.Component<{}, Model> {
 
         // const promise = await getNewScramble();
         // const scram = await promise;
-        this.setState((state, props) => {
-            return {
-                ...state,
-                scramble: scram,
-            };
-        });
+        // this.setState((state, props) => {
+        //     return {
+        //         ...state,
+        //         scramble: scram,
+        //     };
+        // });
     }
 
     public componentWillUnmount() {
