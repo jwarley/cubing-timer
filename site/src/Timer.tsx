@@ -33,18 +33,12 @@ declare global {
 
 window.puzzles = window.puzzles || {};
 
-function getNewScramble(): Promise<string> {
-    console.log("called getnewscramble");
+async function setScramble(){
+    //Change this to actually set the scramble
     let promise: Promise<string> = new Promise(function(resolve, reject) {
         const scram: string = window.puzzles["333"].generateScramble();
         resolve(scram);
     });
-    return promise;
-}
-
-async function setScramble(){
-    //Change this to actually set the scramble
-    let promise = getNewScramble();
     let scramble = await promise;
     console.log(scramble);
 }
