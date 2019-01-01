@@ -4,6 +4,7 @@ import { Time, Penalty } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
+import * as workerPath from "file-loader?name=[name].js!./test.worker";
 
 type TimerPhase =
     | { name: "waiting" }
@@ -23,8 +24,6 @@ interface Model {
     next_scramble: string;
 }
 
-declare var puzzles: any;
-// declare var loadScript: any;
 declare global {
     interface Window {
         puzzles: any;
@@ -32,16 +31,6 @@ declare global {
 }
 
 window.puzzles = window.puzzles || {};
-
-async function setScramble(){
-    //Change this to actually set the scramble
-    let promise: Promise<string> = new Promise(function(resolve, reject) {
-        const scram: string = window.puzzles["333"].generateScramble();
-        resolve(scram);
-    });
-    let scramble = await promise;
-    console.log(scramble);
-}
 
 class Timer extends React.Component<{}, Model> {
     private intervalID: number;
@@ -63,9 +52,8 @@ class Timer extends React.Component<{}, Model> {
         this.intervalID = 0;
     }
 
-    public async componentDidMount() {
-        this.setState({ scramble: "Loading..." });
-        //setScramble();
+    public componentDidMount() {
+        this.setState({ scramble: "Loading scramble..." });
 
         this.intervalID = window.setInterval(() => this.tick(), 1);
 
@@ -79,14 +67,6 @@ class Timer extends React.Component<{}, Model> {
         document.removeEventListener("keydown", this.handleKeyDown);
         document.removeEventListener("keyup", this.handleKeyUp);
     }
-
-    // private writeNewScramble() {
-    //     console.log("U CALRED?");
-    //     // var scram = puzzles["333"].generateScramble();
-    //     var scramble_area: any = document.getElementById("scramble_area");
-    //     scramble_area.innerHTML = this.state.next_scramble;
-    //     // scramble_area.appendChild(document.createTextNode(scram));
-    // }
 
     private handleKeyDown(event: any) {
         this.setState((state, props) => {
@@ -115,7 +95,7 @@ class Timer extends React.Component<{}, Model> {
                                 ? [timeToSave]
                                 : state.bucket.concat([timeToSave]),
                         // change this 5 later to the size of an avg for the event
-                        scramble: state.next_scramble,
+                        scramble: window.puzzles["333"].generateScramble(),
                     };
                     break;
                 default:
@@ -171,9 +151,6 @@ class Timer extends React.Component<{}, Model> {
                             : {
                                   ...state,
                               };
-                    // cache the next scramble while the timer is running
-                    setScramble();
-                    nextState.next_scramble = "HUKKKKAKAKAKAKAKA";
                     break;
                 case "stopped":
                     nextState = {
