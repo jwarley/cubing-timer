@@ -4,7 +4,6 @@ import { Time, Penalty } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
-import * as workerPath from "file-loader?name=[name].js!./test.worker";
 
 type TimerPhase =
     | { name: "waiting" }
@@ -95,7 +94,6 @@ class Timer extends React.Component<{}, Model> {
                                 ? [timeToSave]
                                 : state.bucket.concat([timeToSave]),
                         // change this 5 later to the size of an avg for the event
-                        scramble: window.puzzles["333"].generateScramble(),
                     };
                     break;
                 default:
@@ -156,6 +154,7 @@ class Timer extends React.Component<{}, Model> {
                     nextState = {
                         ...state,
                         phase: { name: "waiting" },
+                        scramble: window.puzzles["333"].generateScramble(),
                     };
                     break;
                 default:
