@@ -1,17 +1,6 @@
 import * as React from "react";
-import * as Util from "./Util";
+import { timeToString } from "./Util";
 import { Time, Penalty } from "./Types";
-
-function timeToString(t: Time): string {
-    let time_string = Util.timeToString(t.ms);
-    if (t.pen === Penalty.DNF) {
-        return "DNF (" + time_string + ")";
-    } else if (t.pen === Penalty.PlusTwo) {
-        return time_string + " + 2 = " + Util.timeToString(t.ms + 2000);
-    } else {
-        return time_string;
-    }
-}
 
 class ScoreCard extends React.Component<{ times: Time[] }, {}> {
     public render() {

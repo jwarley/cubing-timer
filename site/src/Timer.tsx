@@ -1,17 +1,10 @@
 import * as React from "react";
-import * as Util from "./Util";
-import { Time, Penalty } from "./Types";
+import { timeSince, inspPenalty } from "./Util";
+import { Time, Penalty, TimerPhase } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
-
-type TimerPhase =
-    | { name: "waiting" }
-    | { name: "inspecting" }
-    | { name: "green" }
-    | { name: "red"; timeTurnedRed: number }
-    | { name: "running" }
-    | { name: "stopped" };
+import TimerDisplay from "./TimerDisplay";
 
 interface Model {
     startTime: number;
@@ -174,39 +167,39 @@ class Timer extends React.Component<{}, Model> {
 
             switch (state.phase.name) {
                 case "red":
-                    if (Util.timeSince(state.phase.timeTurnedRed) >= 550) {
+                    if (timeSince(state.phase.timeTurnedRed) >= 550) {
                         nextState = {
                             ...state,
-                            elapsed: Util.timeSince(state.startTime),
+                            elapsed: timeSince(state.startTime),
                             phase: { name: "green" },
-                            penalty: Util.inspPenalty(state.elapsed),
+                            penalty: inspPenalty(state.elapsed),
                         };
                     } else {
                         nextState = {
                             ...state,
-                            elapsed: Util.timeSince(state.startTime),
-                            penalty: Util.inspPenalty(state.elapsed),
+                            elapsed: timeSince(state.startTime),
+                            penalty: inspPenalty(state.elapsed),
                         };
                     }
                     break;
                 case "inspecting":
                     nextState = {
                         ...state,
-                        elapsed: Util.timeSince(state.startTime),
-                        penalty: Util.inspPenalty(state.elapsed),
+                        elapsed: timeSince(state.startTime),
+                        penalty: inspPenalty(state.elapsed),
                     };
                     break;
                 case "green":
                     nextState = {
                         ...state,
-                        elapsed: Util.timeSince(state.startTime),
-                        penalty: Util.inspPenalty(state.elapsed),
+                        elapsed: timeSince(state.startTime),
+                        penalty: inspPenalty(state.elapsed),
                     };
                     break;
                 case "running":
                     nextState = {
                         ...state,
-                        elapsed: Util.timeSince(state.startTime),
+                        elapsed: timeSince(state.startTime),
                     };
                     break;
                 default:
@@ -218,26 +211,6 @@ class Timer extends React.Component<{}, Model> {
     }
 
     public render() {
-        // Set the color of the timer
-        let colorClass = "black";
-        if (this.state.phase.name === "red") {
-            colorClass = "red";
-        } else if (this.state.phase.name === "green") {
-            colorClass = "green";
-        }
-
-        // Pretty-print the timer readout
-        let timeString: string;
-        if (
-            this.state.phase.name === "inspecting" ||
-            this.state.phase.name === "red" ||
-            this.state.phase.name === "green"
-        ) {
-            timeString = Util.toInspString(this.state.elapsed);
-        } else {
-            timeString = Util.timeToString(this.state.elapsed);
-        }
-
         return (
             <div className="flex items-start justify-between">
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
@@ -247,7 +220,11 @@ class Timer extends React.Component<{}, Model> {
 
                 <div className="flex flex-column justify-between vh-100 outline">
                     <ScrambleText scramble={this.state.scramble} />
-                    <div className={"tc f1 code outline " + colorClass}>{timeString}</div>
+                    <TimerDisplay
+                        ms={this.state.elapsed}
+                        phase={this.state.phase}
+                        pen={this.state.penalty}
+                    />
                     <ScoreCard times={this.state.bucket} />
                 </div>
 
