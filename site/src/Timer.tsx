@@ -4,6 +4,7 @@ import { Time, Penalty } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
+import * as workerPath from "file-loader?name=[name].js!./test.worker";
 
 type TimerPhase =
     | { name: "waiting" }
@@ -23,8 +24,6 @@ interface Model {
     next_scramble: string;
 }
 
-declare var puzzles: any;
-// declare var loadScript: any;
 declare global {
     interface Window {
         puzzles: any;
@@ -32,25 +31,6 @@ declare global {
 }
 
 window.puzzles = window.puzzles || {};
-
-function getNewScramble(): Promise<string> {
-    console.log("called getnewscramble");
-    let promise: Promise<string> = new Promise(function(resolve, reject) {
-        const scram: string = window.puzzles["333"].generateScramble();
-        resolve(scram);
-    });
-    return promise;
-}
-
-async function loadScript(src: string): Promise<Boolean> {
-    return new Promise((resolve, reject) => {
-        var tag = document.createElement("script");
-        tag.async = false;
-        tag.src = src;
-        document.getElementsByTagName("head")[0].appendChild(tag);
-        resolve(true);
-    });
-}
 
 class Timer extends React.Component<{}, Model> {
     private intervalID: number;
@@ -69,41 +49,16 @@ class Timer extends React.Component<{}, Model> {
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
-
         this.intervalID = 0;
     }
 
-    public async componentDidMount() {
-        // function puzzlesLoaded(puzzles: any) {
-        //     console.log("puzzlesloaded called");
-        //     window.puzzles = puzzles;
-        // }
-        const tnoodleLoaded = await loadScript("tnoodle.js");
-        const puzzlesLoaded = await loadScript("src/puzzlesLoaded.js");
-
-        this.setState({ scramble: "string from compenentdidmount" });
-
-        if (tnoodleLoaded && puzzlesLoaded) {
-            console.log("tnoodle loaded");
-            const scram = await getNewScramble();
-            this.setState({ scramble: scram });
-        } else {
-            console.log("spooky dooky");
-        }
+    public componentDidMount() {
+        this.setState({ scramble: "Loading scramble..." });
 
         this.intervalID = window.setInterval(() => this.tick(), 1);
 
         document.addEventListener("keydown", this.handleKeyDown);
         document.addEventListener("keyup", this.handleKeyUp);
-
-        // const promise = await getNewScramble();
-        // const scram = await promise;
-        // this.setState((state, props) => {
-        //     return {
-        //         ...state,
-        //         scramble: scram,
-        //     };
-        // });
     }
 
     public componentWillUnmount() {
@@ -112,14 +67,6 @@ class Timer extends React.Component<{}, Model> {
         document.removeEventListener("keydown", this.handleKeyDown);
         document.removeEventListener("keyup", this.handleKeyUp);
     }
-
-    // private writeNewScramble() {
-    //     console.log("U CALRED?");
-    //     // var scram = puzzles["333"].generateScramble();
-    //     var scramble_area: any = document.getElementById("scramble_area");
-    //     scramble_area.innerHTML = this.state.next_scramble;
-    //     // scramble_area.appendChild(document.createTextNode(scram));
-    // }
 
     private handleKeyDown(event: any) {
         this.setState((state, props) => {
@@ -148,7 +95,7 @@ class Timer extends React.Component<{}, Model> {
                                 ? [timeToSave]
                                 : state.bucket.concat([timeToSave]),
                         // change this 5 later to the size of an avg for the event
-                        scramble: state.next_scramble,
+                        scramble: window.puzzles["333"].generateScramble(),
                     };
                     break;
                 default:
@@ -204,9 +151,6 @@ class Timer extends React.Component<{}, Model> {
                             : {
                                   ...state,
                               };
-                    // cache the next scramble while the timer is running
-                    // let promise = getNewScramble();
-                    nextState.next_scramble = "HUKKKKAKAKAKAKAKA";
                     break;
                 case "stopped":
                     nextState = {
