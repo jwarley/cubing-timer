@@ -6,6 +6,7 @@ import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
 import TimerDisplay from "./TimerDisplay";
 import HistoryCard from "./HistoryCard";
+import * as workerPath from "file-loader?name=[name].js!./test.worker";
 
 interface Model {
     startTime: number;
@@ -28,6 +29,7 @@ window.puzzles = window.puzzles || {};
 
 class Timer extends React.Component<{}, Model> {
     private intervalID: number;
+    private scrambleWorker = new Worker(workerPath);
 
     constructor(props: {}) {
         super(props);
@@ -53,6 +55,11 @@ class Timer extends React.Component<{}, Model> {
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.intervalID = 0;
+
+        console.log(workerPath, this.scrambleWorker);
+        this.scrambleWorker.addEventListener("message", message => {
+            console.log("Received message");
+        });
     }
 
     public componentDidMount() {
@@ -156,6 +163,7 @@ class Timer extends React.Component<{}, Model> {
                             : {
                                   ...state,
                               };
+                    this.scrambleWorker.postMessage("this is a test message to the worker");
                     break;
                 case "stopped":
                     nextState = {
