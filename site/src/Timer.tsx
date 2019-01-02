@@ -39,8 +39,8 @@ class Timer extends React.Component<{}, Model> {
             phase: { name: "waiting" },
             penalty: undefined,
             bucket: [],
-            scramble: "string from constructor",
-            next_scramble: "",
+            scramble: "Loading scramble...",
+            next_scramble: "Error loading scramble.",
             history: [
                 [
                     { ms: 100390, pen: undefined },
@@ -57,13 +57,11 @@ class Timer extends React.Component<{}, Model> {
         this.intervalID = 0;
 
         this.scrambleWorker.addEventListener("message", message => {
-            console.log("Received message");
+            this.setState({ next_scramble: message.data });
         });
     }
 
     public componentDidMount() {
-        this.setState({ scramble: "Loading scramble..." });
-
         this.intervalID = window.setInterval(() => this.tick(), 1);
 
         document.addEventListener("keydown", this.handleKeyDown);
@@ -107,6 +105,8 @@ class Timer extends React.Component<{}, Model> {
                             state.bucket.length >= 5
                                 ? state.history.concat([state.bucket])
                                 : state.history,
+                        scramble: state.next_scramble,
+                        next_scramble: "Error loading scramble.",
                     };
                     break;
                 default:
@@ -136,6 +136,7 @@ class Timer extends React.Component<{}, Model> {
                             : {
                                   ...state,
                               };
+                    this.scrambleWorker.postMessage("333");
                     break;
                 case "red":
                     // only lifting spacebar should return to inspection
@@ -162,13 +163,11 @@ class Timer extends React.Component<{}, Model> {
                             : {
                                   ...state,
                               };
-                    this.scrambleWorker.postMessage("this is a test message to the worker");
                     break;
                 case "stopped":
                     nextState = {
                         ...state,
                         phase: { name: "waiting" },
-                        scramble: state.next_scramble,
                     };
                     break;
                 default:

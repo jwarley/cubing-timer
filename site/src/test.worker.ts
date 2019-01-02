@@ -6,7 +6,7 @@
 // tnoodle will silently consume these when it's imported and attach objects to them
 // this way, tnoodle won't notice it's being called from a worker
 // Point of interest: these lines are also present WITHIN the handwritten portion of
-// tnoodle.js itself, which I do not pretend to understand even a little bit
+// tnoodle.js itself, which I do not claim to understand even a little bit
 const window = self;
 const document = {};
 document["write"] = function() {};
@@ -24,10 +24,15 @@ if (window.location) {
     document.location = window.location;
 }
 
-importScripts("../tnoodle.js");
+importScripts("tnoodle.js");
 
 // Note that we have utterly given up on making typescript feel comfortable here
 // With great luck that will change in a future version
+// By the way, why is the file named test.worker.ts?
+// Because I built it off a file from a web worker tutorial I found on github.
+// Why not rename it?
+// Oh, because when I rename it, it NO LONGER COMPILES.
+//      O    ____________    o
 
 // Now here are the same setup functions you'd use to call tnoodle normally
 window.TNOODLE_ENV = { TNOODLE_333_MIN_DISTANCE: "1" };
@@ -37,7 +42,7 @@ function puzzlesLoaded(puzzles) {
     window.puzzles = puzzles;
 }
 
-// log a new scramble to the console whenever a message is passed
+// reply with a new scramble whenever a message is passed
 onmessage = function(e) {
-    console.log(window.puzzles["333"].generateScramble());
+    postMessage(window.puzzles[e.data].generateScramble());
 };
