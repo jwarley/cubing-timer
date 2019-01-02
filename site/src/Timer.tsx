@@ -5,6 +5,7 @@ import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
 import TimerDisplay from "./TimerDisplay";
+import HistoryCard from "./HistoryCard";
 
 interface Model {
     startTime: number;
@@ -14,6 +15,7 @@ interface Model {
     bucket: Time[];
     scramble: string;
     next_scramble: string;
+    history: Time[][];
 }
 
 declare global {
@@ -37,6 +39,15 @@ class Timer extends React.Component<{}, Model> {
             bucket: [],
             scramble: "string from constructor",
             next_scramble: "",
+            history: [
+                [
+                    { ms: 100390, pen: undefined },
+                    { ms: 80900, pen: undefined },
+                    { ms: 130340, pen: undefined },
+                    { ms: 110010, pen: undefined },
+                    { ms: 116850, pen: undefined },
+                ],
+            ],
         };
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -86,7 +97,10 @@ class Timer extends React.Component<{}, Model> {
                             state.bucket.length >= 5
                                 ? [timeToSave]
                                 : state.bucket.concat([timeToSave]),
-                        // change this 5 later to the size of an avg for the event
+                        history:
+                            state.bucket.length >= 5
+                                ? state.history.concat([state.bucket])
+                                : state.history,
                     };
                     break;
                 default:
@@ -215,7 +229,7 @@ class Timer extends React.Component<{}, Model> {
             <div className="flex items-start justify-between">
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
                     <StatsCard />
-                    <div className="outline tc">History</div>
+                    <HistoryCard hist={this.state.history} />
                 </div>
 
                 <div className="flex flex-column justify-between vh-100 outline">

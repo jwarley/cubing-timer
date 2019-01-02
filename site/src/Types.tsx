@@ -4,8 +4,8 @@ export interface Time {
 }
 
 export enum Penalty {
-    DNF = "D",
-    PlusTwo = "P",
+    DNF,
+    PlusTwo,
 }
 
 export type TimerPhase =

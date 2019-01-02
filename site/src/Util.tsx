@@ -5,7 +5,7 @@ function timeSince(t: number): number {
     return Date.now() - t;
 }
 
-// helper function for timeToString
+// helper function for msToString
 // pad a ms value with zeros until it's three digits
 function padMs(n: number): string {
     console.assert(n >= 0 && n < 1000, "Invalid argument to padMs() (" + n + ")");
