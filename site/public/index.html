@@ -21,17 +21,33 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <script>
-    window.TNOODLE_ENV = { "TNOODLE_333_MIN_DISTANCE": "1" };
+      window.TNOODLE_ENV = { TNOODLE_333_MIN_DISTANCE: "1" };
     </script>
-    <script id = "tnoodle" src="tnoodle.js"></script>
-    <script id = "ploaded">
-    function puzzlesLoaded(puzzles) {
+    <script id="tnoodle" src="tnoodle.js"></script>
+    <script>
+      function puzzlesLoaded(puzzles) {
         window.puzzles = puzzles;
-        var scram = window.puzzles["333"].generateScramble();
+        window.addEventListener("load", function() {
+          newScramble(puzzles["333"]);
+        });
+      }
+
+      function newScramble(puzzle) {
+        var scram = puzzle.generateScramble();
         var scramble_area = document.getElementById("scramble_area");
         scramble_area.innerHTML = "";
         scramble_area.appendChild(document.createTextNode(scram));
-    };
+        //Display scramble image
+        // var maxWidth = 0;
+        // var maxHeight = 0;
+        // var svgText = tnoodlejs.scrambleToSvg(scram, puzzle, maxWidth, maxHeight);
+        // var scramble_image = document.getElementById("scramble_image");
+        // scramble_image.innerHTML = svgText;
+      }
+
+      function updateImage() {
+
+      }
     </script>
 
     <title>Timer</title>

@@ -243,7 +243,7 @@ class Timer extends React.Component<{}, Model> {
                 </div>
 
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
-                    <div className="outline tc"> Scramble image </div>
+                    <div id="scramble_image" className="outline tc" />
                     <div className="outline tc"> Settings </div>
                 </div>
             </div>
