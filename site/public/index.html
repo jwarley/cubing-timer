@@ -11,45 +11,6 @@
       homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <script>
-      window.TNOODLE_ENV = { TNOODLE_333_MIN_DISTANCE: "1" };
-    </script>
-    <script id="tnoodle" src="tnoodle.js"></script>
-    <script>
-      function puzzlesLoaded(puzzles) {
-        window.puzzles = puzzles;
-        window.addEventListener("load", function() {
-          newScramble(puzzles["333"]);
-        });
-      }
-
-      function newScramble(puzzle) {
-        var scram = puzzle.generateScramble();
-        var scramble_area = document.getElementById("scramble_area");
-        scramble_area.innerHTML = "";
-        scramble_area.appendChild(document.createTextNode(scram));
-        //Display scramble image
-        // var maxWidth = 0;
-        // var maxHeight = 0;
-        // var svgText = tnoodlejs.scrambleToSvg(scram, puzzle, maxWidth, maxHeight);
-        // var scramble_image = document.getElementById("scramble_image");
-        // scramble_image.innerHTML = svgText;
-      }
-
-      function updateImage() {
-
-      }
-    </script>
-
     <title>Timer</title>
   </head>
   <body>

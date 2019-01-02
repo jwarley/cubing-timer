@@ -56,7 +56,6 @@ class Timer extends React.Component<{}, Model> {
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.intervalID = 0;
 
-        console.log(workerPath, this.scrambleWorker);
         this.scrambleWorker.addEventListener("message", message => {
             console.log("Received message");
         });
@@ -169,7 +168,7 @@ class Timer extends React.Component<{}, Model> {
                     nextState = {
                         ...state,
                         phase: { name: "waiting" },
-                        scramble: window.puzzles["333"].generateScramble(),
+                        scramble: state.next_scramble,
                     };
                     break;
                 default:
