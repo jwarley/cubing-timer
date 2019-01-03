@@ -1,12 +1,13 @@
 import * as React from "react";
+import * as workerPath from "file-loader?name=[name].js!./test.worker";
 import { timeSince, inspPenalty } from "./Util";
-import { Time, Penalty, TimerPhase } from "./Types";
+import { Time, Penalty, TimerPhase, WhichScramble, EventOption } from "./Types";
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
 import TimerDisplay from "./TimerDisplay";
 import HistoryCard from "./HistoryCard";
-import * as workerPath from "file-loader?name=[name].js!./test.worker";
+import EventPicker from "./EventPicker";
 
 interface Model {
     startTime: number;
@@ -16,6 +17,7 @@ interface Model {
     bucket: Time[];
     scramble: string;
     next_scramble: string;
+    current_event: string;
     history: Time[][];
 }
 
@@ -41,6 +43,7 @@ class Timer extends React.Component<{}, Model> {
             bucket: [],
             scramble: "Loading scramble...",
             next_scramble: "Error loading scramble.",
+            current_event: "333",
             history: [
                 [
                     { ms: 100390, pen: undefined },
@@ -54,10 +57,17 @@ class Timer extends React.Component<{}, Model> {
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.changeEvent = this.changeEvent.bind(this);
         this.intervalID = 0;
 
         this.scrambleWorker.addEventListener("message", message => {
-            this.setState({ next_scramble: message.data });
+            const scram = message.data[0];
+            const shouldCache: Boolean = message.data[1];
+            if (shouldCache) {
+                this.setState({ next_scramble: scram });
+            } else {
+                this.setState({ scramble: scram });
+            }
         });
     }
 
@@ -73,6 +83,8 @@ class Timer extends React.Component<{}, Model> {
 
         document.removeEventListener("keydown", this.handleKeyDown);
         document.removeEventListener("keyup", this.handleKeyUp);
+
+        this.scrambleWorker.terminate();
     }
 
     private handleKeyDown(event: any) {
@@ -98,12 +110,10 @@ class Timer extends React.Component<{}, Model> {
                         ...state,
                         phase: { name: "stopped" },
                         bucket:
-                            state.bucket.length >= 5
-                                ? [timeToSave]
-                                : state.bucket.concat([timeToSave]),
+                            state.bucket.length >= 5 ? [timeToSave] : [...state.bucket, timeToSave],
                         history:
                             state.bucket.length >= 5
-                                ? state.history.concat([state.bucket])
+                                ? [...state.history, state.bucket]
                                 : state.history,
                         scramble: state.next_scramble,
                         next_scramble: "Error loading scramble.",
@@ -136,7 +146,7 @@ class Timer extends React.Component<{}, Model> {
                             : {
                                   ...state,
                               };
-                    this.scrambleWorker.postMessage("333");
+                    this.scrambleWorker.postMessage([state.current_event, true]);
                     break;
                 case "red":
                     // only lifting spacebar should return to inspection
@@ -230,11 +240,29 @@ class Timer extends React.Component<{}, Model> {
         });
     }
 
+    private changeEvent(selected: EventOption | EventOption[] | null | undefined) {
+        if (selected && !(selected instanceof Array)) {
+            this.setState({ current_event: selected.value });
+            this.scrambleWorker.postMessage([selected.value, false]);
+            this.scrambleWorker.postMessage([selected.value, true]);
+
+            console.log("Changing to ", selected.value);
+        } else {
+            console.log("Invalid input to event select handler.");
+        }
+    }
+
     public render() {
         return (
             <div className="flex items-start justify-between">
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
-                    <StatsCard />
+                    <div className="outline">
+                        <EventPicker
+                            onChange={this.changeEvent}
+                            isDisabled={this.state.phase.name !== "waiting"}
+                        />
+                        <StatsCard />
+                    </div>
                     <HistoryCard hist={this.state.history} />
                 </div>
 

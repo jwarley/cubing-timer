@@ -42,7 +42,12 @@ function puzzlesLoaded(puzzles) {
     window.puzzles = puzzles;
 }
 
+// And then of course the actual thing is like one line of code.
+
 // reply with a new scramble whenever a message is passed
 onmessage = function(e) {
-    postMessage(window.puzzles[e.data].generateScramble());
+    const shortName = e.data[0];
+    const scram = window.puzzles[shortName].generateScramble();
+    const shouldCache = e.data[1];
+    postMessage([scram, shouldCache]);
 };

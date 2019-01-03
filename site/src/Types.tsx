@@ -15,3 +15,14 @@ export type TimerPhase =
     | { name: "red"; timeTurnedRed: number }
     | { name: "running" }
     | { name: "stopped" };
+
+// export enum WhichScramble {
+//     Current,
+//     Next,
+// }
+export type WhichScramble = 0 | 1;
+
+export type EventOption = {
+    value: string;
+    label: string;
+};
