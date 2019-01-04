@@ -29,7 +29,7 @@ declare global {
 
 window.puzzles = window.puzzles || {};
 
-class Timer extends React.Component<{}, Model> {
+class Timer extends React.PureComponent<{}, Model> {
     private intervalID: number;
     private scrambleWorker = new Worker(workerPath);
 
@@ -86,6 +86,14 @@ class Timer extends React.Component<{}, Model> {
 
         this.scrambleWorker.terminate();
     }
+
+    // public shouldComponentUpdate(nextProps: Readonly<{}>, nextState: Readonly<Model>) {
+    //     if (this.state.phase.name == "waiting" && nextState.phase.name == "waiting") {
+    //         return false;
+    //     } else {
+    //         return true;
+    //     }
+    // }
 
     private handleKeyDown(event: any) {
         this.setState((state, props) => {

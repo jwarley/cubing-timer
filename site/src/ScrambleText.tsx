@@ -1,6 +1,6 @@
 import * as React from "react";
 
-class ScrambleText extends React.Component<{ scramble: string }, {}> {
+class ScrambleText extends React.PureComponent<{ scramble: string }, {}> {
     public render() {
         return (
             <div id="scramble_area" className="f3 tc">

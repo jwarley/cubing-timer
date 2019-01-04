@@ -1,6 +1,6 @@
 import * as React from "react";
 
-class StatsCard extends React.Component<{}, {}> {
+class StatsCard extends React.PureComponent<{}, {}> {
     public render() {
         return (
             <div className="outline">

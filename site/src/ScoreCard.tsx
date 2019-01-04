@@ -2,7 +2,7 @@ import * as React from "react";
 import { timeToString } from "./Util";
 import { Time, Penalty } from "./Types";
 
-class ScoreCard extends React.Component<{ times: Time[] }, {}> {
+class ScoreCard extends React.PureComponent<{ times: Time[] }, {}> {
     public render() {
         // build array of scorecard rows
         let rows = [];

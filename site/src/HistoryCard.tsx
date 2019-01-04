@@ -12,7 +12,7 @@ function timeToLi(t: Time) {
     );
 }
 
-class HistoryCard extends React.Component<{ hist: Time[][] }, {}> {
+class HistoryCard extends React.PureComponent<{ hist: Time[][] }, {}> {
     public render() {
         return (
             <dl className="lh-title ml3">
