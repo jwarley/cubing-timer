@@ -1,8 +1,9 @@
 ## Description
 
 This is a work-in-progress speedcubing timer with two main goals:
-    * Replicate a competition solving environment as closely as possible.
-    * Generate useful comparisons of at-home times to official WCA results.
+
+* Replicate a competition solving environment as closely as possible.
+* Generate useful comparisons of at-home times to official WCA results.
 
 Most people solve slower in competition than they do at home, partly because their practice routines don't encourage the same mindset as the WCA average format, and partly because they measure their speed differently at home.
 I claim that correct timer design can mostly fix these problems.
