@@ -1,2 +1,0 @@
-[global.databases]
-sqlite_logs = { url = "/path/to/database.sqlite" }
