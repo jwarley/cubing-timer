@@ -1,30 +1,47 @@
 import * as React from "react";
-import { Time } from "./Types";
-import { timeToString } from "./Util";
+import { Time, JsonAvg } from "./Types";
+import { csToString } from "./Util";
 
-function timeToLi(t: Time) {
+function msToLi(ms: number) {
     return (
         <li className="dib">
             <a href="#" className="f6 db link dim black pr3">
-                {timeToString(t)}
+                {csToString(ms)}
             </a>
         </li>
     );
 }
 
-class HistoryCard extends React.PureComponent<{ hist: Time[][] }, {}> {
+function hist_to_list_items(avgs: JsonAvg[], keys: string[]): JSX.Element[] {
+    let avg_lis = [];
+
+    for (let i = 0; i < avgs.length; i++) {
+        avg_lis.push(
+            <li key={keys[i]}>
+                <b>{csToString(avgs[i].avg)}</b>
+                <div className="pb1">{avgs[i].times.map(csToString).join(" ")}</div>
+            </li>
+        )
+    }
+
+    return avg_lis;
+}
+
+interface Props {
+    hist: JsonAvg[];
+    keys: string[];
+}
+
+class HistoryCard extends React.PureComponent<Props, {}> {
     public render() {
         return (
-            <dl className="lh-title ml3">
-                {this.props.hist
-                    .map(timeList => (
-                        <React.Fragment>
-                            <dt className="f6 b mv1">avg.xyz</dt>
-                            <dd className="ml0">{timeList.map(timeToLi)}</dd>
-                        </React.Fragment>
-                    ))
-                    .reverse()}
-            </dl>
+            <ul className="list pl0">
+                {
+                    hist_to_list_items(this.props.hist, this.props.keys)
+                }
+            </ul>
+
+
         );
     }
 }
