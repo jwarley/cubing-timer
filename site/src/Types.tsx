@@ -2,7 +2,7 @@ import * as firebase from "firebase/app";
 import "firebase/firestore";
 
 export interface Time {
-    ms: number;
+    raw: number;
     pen?: Penalty;
 }
 
@@ -14,7 +14,7 @@ export enum Penalty {
 export type PenString = "dnf" | "plus" | "";
 
 export interface JsonTime {
-    ms: number,
+    raw: number,
     pen: PenString,
 }
 

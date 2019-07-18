@@ -3,10 +3,8 @@ import * as firebase from "firebase/app";
 import "firebase/firestore";
 import * as workerPath from "file-loader?name=[name].js!./test.worker";
 import { timeSince,
-         inspPenalty,
-         timeToWCAFormat,
          timeToJson,
-         timeToRawMs,
+         timeToRaw,
          timeFromJson,
          bucketToJsonAvg
        } from "./Util";
@@ -14,7 +12,7 @@ import { Time, Penalty, JsonAvg, TimerPhase, WhichScramble, Event } from "./Type
 import ScrambleText from "./ScrambleText";
 import ScoreCard from "./ScoreCard";
 import StatsCard from "./StatsCard";
-import TimerDisplay from "./TimerDisplay";
+import { inspPenalty, TimerDisplay } from "./TimerDisplay";
 import HistoryCard from "./HistoryCard";
 import EventPicker from "./EventPicker";
 import SignInForm from "./SignInForm";
@@ -214,8 +212,8 @@ class Timer extends React.PureComponent<{}, Model> {
         console.assert(old_time !== undefined);
 
         const old_pen = old_time!.pen;
-        const new_time = pen === old_pen ? { ms: old_time!.ms, pen: undefined }
-                                         : { ms: old_time!.ms, pen: pen };
+        const new_time = pen === old_pen ? { raw: old_time!.raw, pen: undefined }
+                                         : { raw: old_time!.raw, pen: pen };
 
         const new_bucket_json = old_bucket.concat([new_time])
                                           .map(timeToJson);
@@ -269,7 +267,7 @@ class Timer extends React.PureComponent<{}, Model> {
                 case "running":
                     let timeToSave = {
                         // convert to centiseconds
-                        ms: Math.floor(state.elapsed / 10),
+                        raw: Math.floor(state.elapsed / 10),
                         pen: state.penalty
                     };
 
@@ -417,9 +415,12 @@ class Timer extends React.PureComponent<{}, Model> {
     }
 
     // all times from history and bucket, from least to most recent
-    private all_times_ms_array(): number[] {
-        const bucket_times = this.state.bucket.map((t) => timeToRawMs(t));
-        const hist_times = this.state.history.flatMap((avg) => avg.times).reverse();
+    private all_times_raw_array(): number[] {
+        const bucket_times = this.state.bucket.map((t) => timeToRaw(t));
+        const hist_times = this.state.history
+                                     .slice()
+                                     .reverse()
+                                     .flatMap((avg) => avg.times);
         return hist_times.concat(bucket_times);
     }
 
@@ -454,7 +455,7 @@ class Timer extends React.PureComponent<{}, Model> {
                     <WCACard
                         event={this.state.current_event}
                         wca_id={"2008WARL01"}
-                        home_times={this.all_times_ms_array()}
+                        home_times={this.all_times_raw_array()}
                     />
                 </div>
 
