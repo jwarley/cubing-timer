@@ -17,9 +17,11 @@ function hist_to_list_items(avgs: JsonAvg[], keys: string[]): JSX.Element[] {
 
     for (let i = 0; i < avgs.length; i++) {
         avg_lis.push(
-            <li key={keys[i]}>
-                <b>{rawTimeToString(avgs[i].avg)}</b>
-                <div className="pb1">{avgs[i].times.map(rawTimeToString).join(" ")}</div>
+            <li key={keys[i]}
+                className="bg-animate bg-white hover-bg-light-blue"
+            >
+                <b className="pt1">{rawTimeToString(avgs[i].avg)}</b>
+                <div>{avgs[i].times.map(rawTimeToString).join(" ")}</div>
             </li>
         )
     }
@@ -30,18 +32,22 @@ function hist_to_list_items(avgs: JsonAvg[], keys: string[]): JSX.Element[] {
 interface Props {
     hist: JsonAvg[];
     keys: string[];
+    load_more_func: any;
 }
 
 class HistoryCard extends React.PureComponent<Props, {}> {
     public render() {
         return (
-            <ul className="list pl0">
-                {
-                    hist_to_list_items(this.props.hist, this.props.keys)
-                }
-            </ul>
-
-
+            <div className="overflow-auto">
+                <ul className="list pl0 mv0">
+                    {
+                        hist_to_list_items(this.props.hist, this.props.keys)
+                    }
+                </ul>
+                <div className="pv3 tc" onClick={this.props.load_more_func}>
+                    <a className="ba pointer ph1">Load more</a>
+                </div>
+            </div>
         );
     }
 }

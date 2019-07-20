@@ -21,6 +21,7 @@ import SettingsCard from "./SettingsCard";
 
 interface Model {
     user: firebase.User | null;
+    wca_id: string;
     startTime: number;
     elapsed: number;
     phase: TimerPhase;
@@ -31,6 +32,7 @@ interface Model {
     current_event: Event;
     history: JsonAvg[];
     hist_keys: string[];
+    last_hist_doc: any;
     cur_event_listeners: Function[];
     auth_listener?: Function;
 }
@@ -52,6 +54,7 @@ class Timer extends React.PureComponent<{}, Model> {
         super(props);
         this.state = {
             user: null,
+            wca_id: "",
             startTime: 0,
             elapsed: 0,
             phase: { name: "waiting" },
@@ -66,6 +69,7 @@ class Timer extends React.PureComponent<{}, Model> {
                            },
             history: [],
             hist_keys: [],
+            last_hist_doc: undefined,
             cur_event_listeners: [],
             auth_listener: undefined,
         };
@@ -73,6 +77,8 @@ class Timer extends React.PureComponent<{}, Model> {
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.changeEvent = this.changeEvent.bind(this);
+        this.changeWCAId = this.changeWCAId.bind(this);
+        this.loadMoreHistory = this.loadMoreHistory.bind(this);
         this.toggle_last_penalty = this.toggle_last_penalty.bind(this);
         this.delete_last = this.delete_last.bind(this);
 
@@ -144,10 +150,15 @@ class Timer extends React.PureComponent<{}, Model> {
 
             const unsub_history = target_event_doc.collection("Avgs")
                                                   .orderBy("timestamp", "desc")
+                                                  .limit(25)
                                                   .onSnapshot((snap) => {
                 const avgs = snap.docs.map((doc) => doc.data() as JsonAvg);
                 const doc_ids = snap.docs.map((doc) => doc.id);
-                this.setState({ history: avgs, hist_keys: doc_ids });
+                this.setState({
+                    history: avgs,
+                    hist_keys: doc_ids,
+                    last_hist_doc: snap.docs[snap.docs.length - 1],
+                });
             })
 
             const unsub_bucket = target_event_doc.onSnapshot((snap) => {
@@ -168,6 +179,39 @@ class Timer extends React.PureComponent<{}, Model> {
         } else {
             // no user is signed in
             this.setState({ history: [], bucket: [] });
+        }
+    }
+
+    private loadMoreHistory() {
+        // TODO: what happens when you ask for more and they're all there?
+        if (this.state.user !== null) {
+            const target_event_doc = this.db.collection("Users")
+                                             .doc(this.state.user.uid)
+                                             .collection("Events")
+                                             .doc(this.state.current_event.wca_db_str);
+
+            target_event_doc.collection("Avgs")
+                            .orderBy("timestamp", "desc")
+                            .limit(25)
+                            .startAfter(this.state.last_hist_doc)
+                            .get()
+                            .then((snap) =>
+                {
+                    if (snap.docs.length === 0) {
+                        return;
+                    }
+                    
+                    const new_avgs = snap.docs.map((doc) => doc.data() as JsonAvg);
+                    const new_keys = snap.docs.map((doc) => doc.id);
+                    this.setState((state, props) => {
+                        return {
+                            history: state.history.concat(new_avgs),
+                            hist_keys: state.hist_keys.concat(new_keys),
+                            last_hist_doc: snap.docs[snap.docs.length - 1]
+                        }
+                    })
+                });
+
         }
     }
 
@@ -414,6 +458,11 @@ class Timer extends React.PureComponent<{}, Model> {
         }
     }
 
+    private changeWCAId(e: React.FormEvent<HTMLFormElement>, new_id: string): void {
+        this.setState({ wca_id: new_id });
+        e.preventDefault();
+    }
+
     // all times from history and bucket, from least to most recent
     private all_times_raw_array(): number[] {
         const bucket_times = this.state.bucket.map((t) => timeToRaw(t));
@@ -426,18 +475,21 @@ class Timer extends React.PureComponent<{}, Model> {
 
     public render() {
         return (
-            <div className="flex items-start justify-between">
+            <section className="flex items-start justify-between overflow-hidden-ns vh-100">
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
                     <div className="outline">
                         <EventPicker
                             onChange={this.changeEvent}
                             isDisabled={this.state.phase.name !== "waiting"}
                         />
-                        <StatsCard />
+                        <StatsCard
+                            event={this.state.current_event}
+                        />
                     </div>
                     <HistoryCard
                         hist={this.state.history}
                         keys={this.state.hist_keys}
+                        load_more_func={this.loadMoreHistory}
                     />
                 </div>
 
@@ -448,23 +500,28 @@ class Timer extends React.PureComponent<{}, Model> {
                         phase={this.state.phase}
                         pen={this.state.penalty}
                     />
-                    <ScoreCard times={this.state.bucket}
-                               edit_fn={this.toggle_last_penalty}
-                               delete_fn={this.delete_last}
+                    <ScoreCard
+                        times={this.state.bucket}
+                        edit_fn={this.toggle_last_penalty}
+                        delete_fn={this.delete_last}
+                        avg_size={this.state.current_event.avg_size}
                     />
                     <WCACard
                         event={this.state.current_event}
-                        wca_id={"2008WARL01"}
+                        wca_id={this.state.wca_id}
                         home_times={this.all_times_raw_array()}
                     />
                 </div>
 
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
                     <div id="scramble_image" className="outline tc" />
-                    <SettingsCard />
+                    <SettingsCard
+                        wca_id={this.state.wca_id}
+                        id_change_handler={this.changeWCAId}
+                    />
                     <SignInForm user={this.state.user} />
                 </div>
-            </div>
+            </section>
         );
 
     }

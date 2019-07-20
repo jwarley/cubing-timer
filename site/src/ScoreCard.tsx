@@ -7,6 +7,7 @@ interface Props {
     times: Time[];
     edit_fn: (arg0: Penalty) => void;
     delete_fn: () => void;
+    avg_size: number;
 }
 
 class ScoreCard extends React.PureComponent<Props, {}> {
@@ -37,7 +38,7 @@ class ScoreCard extends React.PureComponent<Props, {}> {
             );
         }
 
-        while (rows.length < 5) {
+        while (rows.length < this.props.avg_size) {
             rows.push(
                 <li key={rows.length} className="ph2 pv2 bb b--light-silver">
                     &nbsp;

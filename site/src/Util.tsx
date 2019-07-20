@@ -10,7 +10,7 @@ function timeSince(t: number): number {
 // helper function for rawTimeToString
 // pad a centisecond value with zeros until it's two digits
 function padCs(n: number): string {
-    console.assert(n >= 0 && n < 100, "Invalid argument to padMs() (" + n + ")");
+    console.assert(n >= 0 && n < 100, "Invalid argument to padCs() (" + n + ")");
 
     let result: string = "";
 
@@ -25,6 +25,10 @@ function padCs(n: number): string {
 
 // pretty-print a centisecond value as a time in h:m:s.dc format
 function rawTimeToString(time: number): string {
+    if (time === -1) {
+        return "DNF";
+    }
+
     // Get the h:m:s.dc components of the time
     let h = Math.floor((time % (100 * 60 ** 3)) / (100 * 60 ** 2));
     let m = Math.floor((time % (100 * 60 ** 2)) / (100 * 60));
@@ -130,9 +134,7 @@ function compareTimes(t1: Time, t2: Time): number {
 
 // map a bucket of times to a Json object for storage
 function bucketToJsonAvg(bucket: Time[]): JsonAvg {
-    let sorted_times = bucket.slice(0);
-    sorted_times.sort(compareTimes);
-    const sorted_raws = sorted_times.map(timeToRaw);
+    const sorted_raws = bucket.slice(0).sort(compareTimes).map(timeToRaw);
 
     const num_solves = sorted_raws.length;
     console.assert(num_solves === 5 || num_solves === 3);
@@ -141,7 +143,7 @@ function bucketToJsonAvg(bucket: Time[]): JsonAvg {
 
     let avg = -1;
 
-    if (num_solves === 5 && sorted_raws[4] !== -1) {
+    if (num_solves === 5 && sorted_raws[3] !== -1) {
         avg = (sorted_raws[1] + sorted_raws[2] + sorted_raws[3]) / 3;
     } else if (num_solves === 3 && sorted_raws[2] !== -1) {
         avg = (sorted_raws[0] + sorted_raws[1] + sorted_raws[2]) / 3;

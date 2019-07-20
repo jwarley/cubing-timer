@@ -1,6 +1,11 @@
 import * as React from "react";
+import { Event } from "./Types";
 
-class StatsCard extends React.PureComponent<{}, {}> {
+interface Props {
+    event: Event;
+}
+
+class StatsCard extends React.PureComponent<Props, {}> {
     public render() {
         return (
             <div className="outline">
