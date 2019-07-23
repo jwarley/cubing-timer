@@ -26,6 +26,13 @@ export interface JsonAvg {
     timestamp: firebase.firestore.Timestamp;
 }
 
+export interface StatsRecord {
+    pb_single: number;
+    pb_single_loc: string; // a doc id, "bucket", or ""
+    pb_avg: number | null;
+    pb_avg_loc: string | null;
+}
+
 export type TimerPhase =
     | { name: "waiting" }
     | { name: "inspecting" }

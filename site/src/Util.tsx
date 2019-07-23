@@ -114,6 +114,23 @@ function timeToRaw(t: Time): number {
     }
 }
 
+// returns true if t1 is faster than t2
+// ties return false
+function isFaster(t1: number, t2: number) {
+    const t1_is_dnf = t1 === -1;
+    const t2_is_dnf = t2 === -1;
+
+    if (t1_is_dnf && !t2_is_dnf) {
+        return false;
+    } else if (!t1_is_dnf && t2_is_dnf) {
+        return true;
+    } else if (t1_is_dnf && t2_is_dnf) {
+        return false;
+    } else {
+        return t1 < t2;
+    }
+}
+
 // returns negative if t1 is faster than t2, positive if slower, 0 if equal
 function compareTimes(t1: Time, t2: Time): number {
     const t1_is_dnf = t1.pen === Penalty.DNF;
@@ -158,7 +175,6 @@ function bucketToJsonAvg(bucket: Time[]): JsonAvg {
     }
 }
 
-
 export {
     rawTimeToString,
     timeToString,
@@ -168,4 +184,6 @@ export {
     timeToRaw,
     timeFromJson,
     bucketToJsonAvg,
+    isFaster,
+    compareTimes,
 };

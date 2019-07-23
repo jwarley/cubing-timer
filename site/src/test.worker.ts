@@ -1,12 +1,14 @@
-// Okay, buckle up kiddos.
-// Do not lay eyes on this file unless absolutely necessary
-// because it is probably so janky it's literally poisonous.
+/////////////////////////////////////////////////////
+//                      WARNING                    //
+//                YOU ARE NOW ENTERING             //
+//                   THE JANK ZONE                 //
+/////////////////////////////////////////////////////
+// This file has gone [0] days without an accident //
+/////////////////////////////////////////////////////
 
 // create a fake window and document and some fake methods and properties on them
 // tnoodle will silently consume these when it's imported and attach objects to them
 // this way, tnoodle won't notice it's being called from a worker
-// Point of interest: these lines are also present WITHIN the handwritten portion of
-// tnoodle.js itself, which I do not claim to understand even a little bit
 const window = self;
 const document = {};
 document["write"] = function() {};
@@ -26,14 +28,6 @@ if (window.location) {
 
 importScripts("tnoodle.js");
 
-// Note that we have utterly given up on making typescript feel comfortable here
-// With great luck that will change in a future version
-// By the way, why is the file named test.worker.ts?
-// Because I built it off a file from a web worker tutorial I found on github.
-// Why not rename it?
-// Oh, because when I rename it, it NO LONGER COMPILES.
-//      O    ____________    o
-
 // Now here are the same setup functions you'd use to call tnoodle normally
 window.TNOODLE_ENV = { TNOODLE_333_MIN_DISTANCE: "1" };
 
@@ -42,12 +36,32 @@ function puzzlesLoaded(puzzles) {
     window.puzzles = puzzles;
 }
 
-// And then of course the actual thing is like one line of code.
 
-// reply with a new scramble whenever a message is passed
+// reply with a new scramble or scramble image whenever a message is passed
 onmessage = function(e) {
-    const shortName = e.data[0];
-    const scram = window.puzzles[shortName].generateScramble();
-    const shouldCache = e.data[1];
-    postMessage([scram, shouldCache]);
+    // e.data[0] is the type of request we received (scramble, image, etc.)
+
+    if (e.data[0] === "scramble") {
+        // return a new scramble for the puzzle type indicated by e.data[1]
+        // e.data[2] is a bool indicating whether to cache this scramble
+        const shortName = e.data[1];
+        const shouldCache = e.data[2];
+        const scram = window.puzzles[shortName].generateScramble();
+        postMessage(["scramble", scram, shouldCache]);
+    } else if (e.data[0] === "image") {
+        // generate an svg image of the scramble passsed in e.data[1] 
+        // e.data[2] is the puzzle shortname
+        const scram = e.data[1];
+        const puzzle = e.data[2];
+        const svg_img = tnoodlejs.scrambleToSvg(scram, puzzle, 0, 0);
+        postMessage(["image", svg_img]);
+    }
 };
+// onmessage = function(e) {
+//     const shortName = e.data[0];
+//     const shouldCache = e.data[1];
+//     const scram = window.puzzles[shortName].generateScramble();
+//     const svg_img = tnoodlejs.scrambleToSvg(scram, window.puzzles[shortName], 0, 0);
+//     // console.log(svg_img);
+//     postMessage([scram, shouldCache, svg_img]);
+// };
