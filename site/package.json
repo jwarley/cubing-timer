@@ -8,11 +8,16 @@
     "@types/react": "^16.7.18",
     "@types/react-dom": "^16.0.11",
     "@types/react-select": "^2.0.11",
+    "@types/victory": "^31.0.19",
+    "firebase": "^6.2.2",
+    "firebaseui": "^4.0.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-firebaseui": "^3.1.2",
     "react-scripts": "2.1.2",
     "react-select": "^2.2.0",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.2",
+    "victory": "^32.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

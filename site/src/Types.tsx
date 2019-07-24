@@ -1,11 +1,36 @@
+import * as firebase from "firebase/app";
+import "firebase/firestore";
+
 export interface Time {
-    ms: number;
+    raw: number;
     pen?: Penalty;
 }
 
 export enum Penalty {
     DNF,
     PlusTwo,
+}
+
+export type PenString = "dnf" | "plus" | "";
+
+export interface JsonTime {
+    raw: number,
+    pen: PenString,
+}
+
+export interface JsonAvg {
+    best: number;
+    worst: number;
+    times: number[];
+    avg: number;
+    timestamp: firebase.firestore.Timestamp;
+}
+
+export interface StatsRecord {
+    pb_single: number;
+    pb_single_loc: string; // a doc id, "bucket", or ""
+    pb_avg: number | null;
+    pb_avg_loc: string | null;
 }
 
 export type TimerPhase =
@@ -16,13 +41,11 @@ export type TimerPhase =
     | { name: "running" }
     | { name: "stopped" };
 
-// export enum WhichScramble {
-//     Current,
-//     Next,
-// }
-export type WhichScramble = 0 | 1;
+export interface Event {
+    name: string;
+    avg_size: number;
+    scramble_str: string;
+    wca_db_str: string;
+}
 
-export type EventOption = {
-    value: string;
-    label: string;
-};
+export type WhichScramble = 0 | 1;

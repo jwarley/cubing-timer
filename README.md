@@ -6,25 +6,24 @@ This is a work-in-progress speedcubing timer with two main goals:
 * Generate useful comparisons of at-home times to official WCA results.
 
 Most people solve slower in competition than they do at home, partly because their practice routines don't encourage the same mindset as the WCA average format, and partly because they measure their speed differently at home.
-I claim that correct timer design can mostly fix these problems.
-
-Note: progress on this is very intermittent because I'm chronically in school, but it is definitely going to be finished and it is definitely going to be better than the other things when that happens.
+Timers may help narrow this gap by better evoking the competition workflow/mindset.
 
 ### What works:
 * Timer
 * Penalties
-* Scrambles (mostly)
+* Scrambles
 * Event switching
-* Saving times (within a session)
+* Saving times
+* PB Stats
+* WCA interface (sort of)
 
 ### What doesn't:
-* Stats
-* Saving times (across sessions)
-* WCA interface
 * Scramble images
 * Mobile
+* Automatic sessions (?)
+* Looking nice
 
-**Acknowledgements:** AJ Blair (design), Zack Eberhart (code)
+**Acknowledgements:** AJ Blair (design), Zack Eberhart (code), Michael Gottlieb/Lucas Garron/Shuang Cheng (scramble generators)
 
 ## How to Build
 
@@ -41,5 +40,3 @@ To build for production:
 cd site
 yarn build
 ```
-
-No need to do anything with the Rust server code because it currently does nothing.
