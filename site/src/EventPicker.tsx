@@ -61,7 +61,7 @@ class EventPicker extends React.PureComponent<Props, {}> {
       },
       { name: "Square-1",
         avg_size: 5,
-        scramble_str: "sq1fast",
+        scramble_str: "sq1",
         wca_db_str: "sq1",
       },
       { name: "Clock",
@@ -77,6 +77,11 @@ class EventPicker extends React.PureComponent<Props, {}> {
     ]
 
     public render() {
+        const dropdownStyle = (base: any) => ({
+            // make the menu tall enough that all events are visible
+            maxHeight: 500,
+        });
+
         return (
             <React.Fragment>
                 <Select
@@ -96,6 +101,7 @@ class EventPicker extends React.PureComponent<Props, {}> {
                     getOptionLabel={({ name }) => name}
                     openMenuOnFocus={true}
                     blurInputOnSelect={true}
+                    styles={{menuList: dropdownStyle}}
                     // This looks like some wacky bug in react-select.
                     // Without the following line, all menu options appear selected.
                     // source: https://stackoverflow.com/questions/52000594/every-menu-option-rendered-as-selected-strange-workaround

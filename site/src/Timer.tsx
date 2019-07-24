@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
-import * as workerPath from "file-loader?name=[name].js!./test.worker";
 import { timeSince,
          timeToJson,
          timeToRaw,
@@ -33,7 +32,6 @@ interface Model {
     scramble: string;
     // scramble_img: React.SVGProps<SVGSVGElement>;
     scramble_img: {"__html": string};
-    next_scramble: string;
     current_event: Event;
     history: {[id: string]: JsonAvg};
     last_hist_doc?: firebase.firestore.QueryDocumentSnapshot;
@@ -43,17 +41,10 @@ interface Model {
     stats: StatsRecord;
 }
 
-declare global {
-    interface Window {
-        puzzles: any;
-    }
-}
-
-window.puzzles = window.puzzles || {};
+declare var getScramble: any;
 
 class Timer extends React.PureComponent<{}, Model> {
     private intervalID: number;
-    private scrambleWorker = new Worker(workerPath);
     private db = firebase.firestore();
 
     constructor(props: {}) {
@@ -76,7 +67,6 @@ class Timer extends React.PureComponent<{}, Model> {
             bucket: [],
             scramble: "Loading scramble...",
             scramble_img: { __html: "" },
-            next_scramble: "Error loading scramble.",
             current_event: { name: "3x3x3",
                              avg_size: 5,
                              scramble_str: "333",
@@ -105,32 +95,6 @@ class Timer extends React.PureComponent<{}, Model> {
         this.uninspect_avg = this.uninspect_avg.bind(this);
 
         this.intervalID = 0;
-
-        this.scrambleWorker.addEventListener("message", message => {
-            const message_type = message.data[0];
-
-            if (message_type === "scramble") {
-                const scram = message.data[1];
-                const shouldCache: boolean = message.data[2];
-                if (shouldCache) {
-                    this.setState({ next_scramble: scram });
-                } else {
-                    this.setState({ scramble: scram });
-                }
-            } else if (message_type === "image") {
-                const svg: string = message.data[1];
-                this.setState({ scramble_img: { __html: svg }});
-            }
-            // const scram = message.data[0];
-            // const shouldCache: Boolean = message.data[1];
-            // const svg: string = message.data[2];
-            // console.log(svg);
-            // if (shouldCache) {
-            //     this.setState({ next_scramble: scram, scramble_img: { __html: svg }});
-            // } else {
-            //     this.setState({ scramble: scram, scramble_img: { __html: svg }});
-            // }
-        });
     }
 
     public componentDidMount() {
@@ -138,11 +102,6 @@ class Timer extends React.PureComponent<{}, Model> {
 
         document.addEventListener("keydown", this.handleKeyDown);
         document.addEventListener("keyup", this.handleKeyUp);
-
-        this.scrambleWorker
-            .postMessage(["scramble", this.state.current_event.scramble_str, false]);
-        this.scrambleWorker
-            .postMessage(["scramble", this.state.current_event.scramble_str, true]);
     }
 
     public componentWillUnmount() {
@@ -152,18 +111,19 @@ class Timer extends React.PureComponent<{}, Model> {
         document.removeEventListener("keydown", this.handleKeyDown);
         document.removeEventListener("keyup", this.handleKeyUp);
 
-        this.scrambleWorker.terminate();
-
         // stop listening to any firestore docs
         for (var unsub_func of this.state.cur_event_listeners) {
             unsub_func();
         }
 
         this.state.auth_listener();
-
     }
 
     private subscribe_to_event(e: Event) {
+        this.setState({
+            scramble: getScramble(e.scramble_str),
+        });
+
         // unsub from previous event
         for (var unsub_func of this.state.cur_event_listeners) {
             unsub_func();
@@ -214,14 +174,25 @@ class Timer extends React.PureComponent<{}, Model> {
             // Fetch event stats
             const unsub_stats = target_event_doc.onSnapshot((snap) => {
                 const saved = snap.get("stats");
-                this.setState({
-                    stats: {
-                        pb_single: saved.pb_single === undefined ? -2 : saved.pb_single,
-                        pb_single_loc: saved.pb_single_loc === undefined ? "" : saved.pb_single_loc,
-                        pb_avg: saved.pb_avg === undefined ? null : saved.pb_avg,
-                        pb_avg_loc: saved.pb_avg_loc === undefined ? null : saved.pb_avg_loc,
-                    }
-                })
+                if (saved === undefined) {
+                    this.setState({
+                        stats: {
+                            pb_single: -2,
+                            pb_single_loc: "",
+                            pb_avg: null,
+                            pb_avg_loc: null,
+                        }
+                    })
+                } else {
+                    this.setState({
+                        stats: {
+                            pb_single: saved.pb_single === undefined ? -2 : saved.pb_single,
+                            pb_single_loc: saved.pb_single_loc === undefined ? "" : saved.pb_single_loc,
+                            pb_avg: saved.pb_avg === undefined ? null : saved.pb_avg,
+                            pb_avg_loc: saved.pb_avg_loc === undefined ? null : saved.pb_avg_loc,
+                        }
+                    })
+                }
             })
         }
     }
@@ -295,33 +266,39 @@ class Timer extends React.PureComponent<{}, Model> {
                         // about to be beaten by the new time, update its location
                         // (checking now saves a query if we did just break the pb)
                         if (pb_single_loc === "bucket" && isFaster(pb_single, new_time)) {
-                            current_event_doc.update({
-                                "stats.pb_single_loc": avg_doc_ref.id,
-                            });
+                            current_event_doc.set({
+                                stats: {
+                                    pb_single_loc: avg_doc_ref.id,
+                                }
+                            }, {merge: true});
                         }
 
                         // Check for a new PB avg and update stats if necessary
                         if (pb_avg === null || isFaster(avg_json.avg, pb_avg)) {
-                            current_event_doc.update({
-                                "stats.pb_avg": avg_json.avg,
-                                "stats.pb_avg_loc": avg_doc_ref.id,
-                            });
+                            current_event_doc.set({
+                                stats: {
+                                    pb_avg: avg_json.avg,
+                                    pb_avg_loc: avg_doc_ref.id,
+                                }
+                            }, {merge: true});
                         }
                     });
             }
 
             // Check for a new PB single and update stats if necessary
             if (pb_single === -2 || isFaster(new_time, pb_single)) {
-                current_event_doc.update({
-                    "stats.pb_single": new_time,
-                    "stats.pb_single_loc": "bucket",
-                });
+                current_event_doc.set({
+                    stats: {
+                        pb_single: new_time,
+                        pb_single_loc: "bucket",
+                    }
+                }, {merge: true});
             }
 
             // add the new time to the db
-            current_event_doc.update({
+            current_event_doc.set({
                 "bucket": bucket_json,
-            });
+            }, {merge: true});
         }
     }
 
@@ -351,7 +328,9 @@ class Timer extends React.PureComponent<{}, Model> {
                                              .collection("Events")
                                              .doc(this.state.current_event.wca_db_str);
 
-            current_event_doc.update({ bucket: new_bucket_json }).then(() => {
+            current_event_doc.set({
+                bucket: new_bucket_json
+            }, {merge: true}).then(() => {
                 this.recompute_pb_single(new_bucket);
             });
         }
@@ -386,31 +365,38 @@ class Timer extends React.PureComponent<{}, Model> {
                 .then((snap) => {
                     if (snap.docs.length === 0) {
                         // if there are no stored avgs, bucket pb wins
-                        current_event_doc.update({
-                            "stats.pb_single": best_in_bucket,
-                            "stats.pb_single_loc": "bucket",
-                        });
+                        current_event_doc.set({
+                            stats: {
+                                pb_single: best_in_bucket,
+                                pb_single_loc: "bucket",
+                            }
+                        }, {merge: true});
                     } else if (best_in_bucket === -2) {
                         // if there are stored avgs and bucket pb doesn't exist, avg pb wins
                         const containing_avg = snap.docs[0].data() as JsonAvg;
                         const best_in_hist = containing_avg.best;
 
-                        current_event_doc.update({
-                            "stats.pb_single": best_in_hist,
-                            "stats.pb_single_loc": snap.docs[0].id,
-                        });
+                        current_event_doc.set({
+                            stats: {
+                                pb_single: best_in_hist,
+                                pb_single_loc: snap.docs[0].id,
+                            }
+                        }, {merge: true});
                     } else {
                         // else, compare the best pb from an avg with bucket pb
                         const containing_avg = snap.docs[0].data() as JsonAvg;
                         const best_in_hist = containing_avg.best;
 
-                        current_event_doc.update(isFaster(best_in_bucket, best_in_hist) ? {
-                            "stats.pb_single": best_in_bucket,
-                            "stats.pb_single_loc": "bucket",
-                        } : {
-                            "stats.pb_single": best_in_hist,
-                            "stats.pb_single_loc": snap.docs[0].id,
-                        });
+                        current_event_doc.set(isFaster(best_in_bucket, best_in_hist) ? {
+                            stats: {
+                                pb_single: best_in_bucket,
+                                pb_single_loc: "bucket",
+                            }} : {
+                            stats: {
+                                pb_single: best_in_hist,
+                                pb_single_loc: snap.docs[0].id,
+                            }
+                        }, {merge: true});
                     }
                 });
         }
@@ -434,17 +420,21 @@ class Timer extends React.PureComponent<{}, Model> {
                 .then((snap) => {
                     if (snap.docs.length === 0) {
                         // if there are no stored avgs, pb avg doesn't exist
-                        current_event_doc.update({
-                            "stats.pb_avg": null,
-                            "stats.pb_avg_loc": null,
-                        });
+                        current_event_doc.set({
+                            stats: {
+                                pb_avg: null,
+                                pb_avg_loc: null,
+                            }
+                        }, {merge: true});
                     } else {
                         // update the stats with the new best avg
                         const new_pb_avg = snap.docs[0].data() as JsonAvg;
-                        current_event_doc.update({
-                            "stats.pb_avg": new_pb_avg.avg,
-                            "stats.pb_avg_loc": snap.docs[0].id,
-                        });
+                        current_event_doc.set({
+                            stats: {
+                                pb_avg: new_pb_avg.avg,
+                                pb_avg_loc: snap.docs[0].id,
+                            }
+                        }, {merge: true});
                     }
                 });
         }
@@ -465,9 +455,9 @@ class Timer extends React.PureComponent<{}, Model> {
                                              .doc(this.state.current_event.wca_db_str);
 
             // update the bucket
-            current_event_doc.update({
+            current_event_doc.set({
                 "bucket": new_bucket.map(timeToJson),
-            });
+            }, {merge: true});
 
             // recompute the pb single if we just deleted it
             if (timeToRaw(deleted_time!) === this.state.stats.pb_single) {
@@ -524,8 +514,7 @@ class Timer extends React.PureComponent<{}, Model> {
                     nextState = {
                         ...state,
                         phase: { name: "stopped" },
-                        scramble: state.next_scramble,
-                        next_scramble: "Error loading scramble.",
+                        scramble: getScramble(state.current_event.scramble_str),
                     };
 
                     this.saveTimeToDB(timeToSave);
@@ -558,10 +547,6 @@ class Timer extends React.PureComponent<{}, Model> {
                             : {
                                   ...state,
                               };
-
-                    this.scrambleWorker
-                        .postMessage(["scramble", state.current_event.scramble_str, true]);
-
                     break;
                 case "red":
                     // only lifting spacebar should return to inspection
@@ -657,10 +642,9 @@ class Timer extends React.PureComponent<{}, Model> {
 
     private changeEvent(selected: Event | Event[] | null | undefined) {
         if (selected && !(selected instanceof Array)) {
-            this.setState({ current_event: selected });
-            this.scrambleWorker.postMessage(["scramble", selected.scramble_str, false]);
-            this.scrambleWorker.postMessage(["scramble", selected.scramble_str, true]);
-
+            this.setState({
+                current_event: selected,
+            });
             this.subscribe_to_event(selected);
         } else {
             console.log("Invalid input to event select handler.");
@@ -734,7 +718,10 @@ class Timer extends React.PureComponent<{}, Model> {
                         this.state.inspect_avg === undefined
                         ?
                         <React.Fragment>
-                            <ScrambleText scramble={this.state.scramble} />
+                            <ScrambleText
+                                scramble={this.state.scramble}
+                                event={this.state.current_event}
+                            />
                             <TimerDisplay
                                 ms={this.state.elapsed}
                                 phase={this.state.phase}
