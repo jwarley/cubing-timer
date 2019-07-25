@@ -1,6 +1,7 @@
 import * as React from "react";
-import { VictoryChart, VictoryLine, VictoryArea } from "victory";
+import { VictoryTheme, VictoryGroup, VictoryLine, VictoryArea, VictoryAxis } from "victory";
 import { Event } from "./Types";
+import { rawTimeToString } from "./Util";
 
 interface Props {
     event: Event;
@@ -22,7 +23,7 @@ class WCACard extends React.PureComponent<Props, State> {
     }
 
     componentDidMount() {
-        const WCA_API_PREFIX = "http://www.worldcubeassociation.org/api/v0/persons/"
+        const WCA_API_PREFIX = "https://www.worldcubeassociation.org/api/v0/persons/"
 
         this.maybe_get_wca_pb= this.maybe_get_wca_pb.bind(this);
 
@@ -36,7 +37,7 @@ class WCACard extends React.PureComponent<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        const WCA_API_PREFIX = "http://www.worldcubeassociation.org/api/v0/persons/"
+        const WCA_API_PREFIX = "https://www.worldcubeassociation.org/api/v0/persons/"
 
         if (this.props.event !== prevProps.event || this.props.wca_id !== prevProps.wca_id) {
             fetch(WCA_API_PREFIX + this.props.wca_id)
@@ -88,19 +89,28 @@ class WCACard extends React.PureComponent<Props, State> {
                     <p className="tc">No WCA data available.</p>
                 </div>
             );
+        } else if (this.props.home_times.length < this.props.event.avg_size) {
+            return (
+                <div className="outline">
+                    <p className="tc">Complete an average to see the performance graph.</p>
+                </div>
+            );
         } else {
             const y_vals = this.props.home_times;
 
             let data = [];
 
             for (let x = 0; x < y_vals.length; x++) {
-                data.push({ x: x, y: y_vals[x] })
+                if (y_vals[x] !== -1) {
+                    data.push({ x: x, y: y_vals[x] });
+                }
             }
 
             return (
                 <div className="outline">
-                    <VictoryChart
-                    height={200}
+                    <VictoryGroup
+                        height={120}
+                        padding={{ top: 20, bottom: 20, left: 80, right: 40 }}
                     >
                         <VictoryArea
                             data={data}
@@ -112,15 +122,21 @@ class WCACard extends React.PureComponent<Props, State> {
                             }}
                         />
                         <VictoryLine
-                            labels={[this.state.wca_pb]}
+                            domain={{ x: [0, data.length + 1] }}
                             style={{
                                 data: {
-                                    stroke: "#ff0000"
+                                    stroke: "#AA0000",
+                                    strokeWidth: 1,
+                                    strokeDasharray: "4",
                                 }
                             }}
                             y={() => this.state.wca_pb!}
                         />
-                    </VictoryChart>
+                        <VictoryAxis dependentAxis crossAxis
+                            height={200}
+                            tickFormat={(t) => rawTimeToString(t)}
+                        />
+                    </VictoryGroup>
                 </div>
             );
         }

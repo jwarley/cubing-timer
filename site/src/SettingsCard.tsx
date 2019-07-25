@@ -21,6 +21,14 @@ class SettingsCard extends React.PureComponent<Props, State> {
         this.submitWCAId = this.submitWCAId.bind(this);
     }
 
+    componentDidUpdate(prevProps: Props) {
+        if (this.props.wca_id !== prevProps.wca_id) {
+            this.setState({
+                wca_id: this.props.wca_id,
+            });
+        }
+    }
+    
     private updateFormContent(e: React.ChangeEvent<HTMLInputElement>) {
         this.setState({ wca_id: e.target.value });
     }

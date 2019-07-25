@@ -52,7 +52,24 @@ class Timer extends React.PureComponent<{}, Model> {
 
         const unsub_auth = firebase.auth().onAuthStateChanged(
             (user) => {
-                this.setState({ user: user });
+                // set the user in react state
+                this.setState({
+                    user: user,
+                });
+
+                // apply saved preferences, if they exist
+                if (user !== null) {
+                    this.db.collection("Users").doc(user.uid)
+                        .get().then((snap) => {
+                            if (snap.data() !== undefined) {
+                                this.setState({
+                                    wca_id: snap.data()!.wca_id,
+                                }) 
+                            }
+                        })
+                }
+
+                // subscribe to the initial event
                 this.subscribe_to_event(this.state.current_event);
             }
         );
@@ -136,7 +153,7 @@ class Timer extends React.PureComponent<{}, Model> {
                                              .doc(this.state.user.uid)
                                              .collection("Events")
                                              .doc(e.wca_db_str);
-
+            
             // Fetch event history
             const unsub_history = target_event_doc.collection("Avgs")
                                                   .orderBy("timestamp", "desc")
@@ -654,19 +671,29 @@ class Timer extends React.PureComponent<{}, Model> {
     private changeWCAId(e: React.FormEvent<HTMLFormElement>, new_id: string): void {
         this.setState({ wca_id: new_id });
         e.preventDefault();
+        if (this.state.user === null) {
+            return            
+        } else {
+            this.db.collection("Users")
+                   .doc(this.state.user.uid)
+                   .set({
+                       wca_id: new_id,
+                   }, {merge: true});
+        }
     }
 
     // all times from history and bucket, from least to most recent
     private all_times_raw_array(): number[] {
         // TODO: check for sorting bugs
         const bucket_times = this.state.bucket.map((t) => timeToRaw(t));
+
         const compare_by_timestamp = (avg1: JsonAvg, avg2: JsonAvg) => {
             const d1 = avg1.timestamp.toDate();
             const d2 = avg2.timestamp.toDate();
             if (d1 < d2) {
-                return 1;
-            } else if (d1 > d2) {
                 return -1;
+            } else if (d1 > d2) {
+                return 1;
             } else {
                 return 0;
             }
