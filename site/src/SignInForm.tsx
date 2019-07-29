@@ -42,10 +42,10 @@ const uiConfig = {
   signInOptions: [
     // Leave the lines as is for the providers you want to offer your users.
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-    firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-    firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    firebase.auth.PhoneAuthProvider.PROVIDER_ID
+    // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+    // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+    // firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    // firebase.auth.PhoneAuthProvider.PROVIDER_ID
   ],
   // Terms of service url.
   tosUrl: '<your-tos-url>',
@@ -67,9 +67,8 @@ class SignInForm extends React.PureComponent<Props> {
       );
     } else {
       return (
-        <div className="outline">
-          <p>Signed in as {this.props.user.displayName}</p>
-          <a className="ba pointer" onClick={() => firebase.auth().signOut()}>Sign out</a>
+        <div className="pa2 tc">
+          <a className="dark-blue no-underline underline-hover pointer" onClick={() => firebase.auth().signOut()}>{"Sign out " + this.props.user.displayName + "?"}</a>
         </div>
         )
     }

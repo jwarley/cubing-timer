@@ -82,9 +82,10 @@ class WCACard extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const tachyons_styles = "dn db-ns outline"
         if (this.state.wca_pb === undefined) {
             return (
-                <div className="outline">
+                <div className={tachyons_styles}>
                     <p className="tc">No WCA data available.</p>
                 </div>
             );
@@ -98,7 +99,7 @@ class WCACard extends React.PureComponent<Props, State> {
             }
 
             return (
-                <div className="outline">
+                <div className={tachyons_styles}>
                     <VictoryChart
                     height={200}
                     >

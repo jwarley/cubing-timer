@@ -12,7 +12,8 @@ interface Props {
 
 class ScoreCard extends React.PureComponent<Props, {}> {
     public render() {
-        const edit_ctrls = <span className="fr">
+        // TODO shade the selected penalty button
+        const edit_ctrls = <span className="">
                                <a className="link dim br1 bt bb bl ph1 dib black pointer"
                                   onClick={() => this.props.edit_fn(Penalty.PlusTwo)}>+2
                                </a>
@@ -31,7 +32,7 @@ class ScoreCard extends React.PureComponent<Props, {}> {
         for (let i = 0; i < num_times; i++) {
             let t = this.props.times[i];
             rows[i] = (
-                <li key={i} className="ph2 pv2 bb b--light-silver">
+                <li key={i} className="flex justify-between ph2 pv2 bb b--light-silver">
                     {timeToString(t)}
                     {i === num_times - 1 ? edit_ctrls : ""}
                 </li>
@@ -47,9 +48,9 @@ class ScoreCard extends React.PureComponent<Props, {}> {
         }
 
         return (
-            <div className="outline">
-                <h1 className="f5 center mw5">Current Average</h1>
-                <ul className="list pl0 ml0 center mw5 ba b--light-silver br1">{rows}</ul>
+            <div className="center mw5">
+                <h1 className="f5 small-caps">Current Average</h1>
+                <ul className="list pl0 ml0 ba b--light-silver br1">{rows}</ul>
             </div>
         );
     }

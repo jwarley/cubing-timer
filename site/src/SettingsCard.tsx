@@ -32,7 +32,8 @@ class SettingsCard extends React.PureComponent<Props, State> {
     public render() {
         return (
             <div className="outline">
-                <h1 className="">Settings</h1>
+                <div className="f5 b small-caps tc">Settings</div>
+                
                 <form className="pa1 black-80" onSubmit={this.submitWCAId}>
                   <div className="measure">
                     <label className="f6 b db mb2">WCA ID</label>

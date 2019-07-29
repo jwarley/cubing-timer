@@ -61,7 +61,8 @@ function timeToString(t: Time): string {
     if (t.pen === Penalty.DNF) {
         return "DNF (" + time_string + ")";
     } else if (t.pen === Penalty.PlusTwo) {
-        return time_string + " + 2 = " + rawTimeToString(t.raw + 200);
+        return rawTimeToString(t.raw + 200);
+        // return time_string + " + 2 = " + rawTimeToString(t.raw + 200);
     } else {
         return time_string;
     }

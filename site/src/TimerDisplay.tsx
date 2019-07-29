@@ -81,7 +81,7 @@ function msPenToString(ms: number, pen: Penalty) {
     if (pen === Penalty.DNF) {
         return "DNF (" + time_string + ")";
     } else if (pen === Penalty.PlusTwo) {
-        return time_string + " + 2 = " + msToString(ms + 200);
+        return time_string + " + 2 = " + msToString(ms + 2000);
     } else {
         return time_string;
     }

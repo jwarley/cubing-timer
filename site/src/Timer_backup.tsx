@@ -39,7 +39,6 @@ interface Model {
     cur_event_listeners: Function[];
     auth_listener: firebase.Unsubscribe;
     stats: StatsRecord;
-    window_width: number;
 }
 
 declare var getScramble: any;
@@ -82,12 +81,10 @@ class Timer extends React.PureComponent<{}, Model> {
                 pb_avg: null,
                 pb_avg_loc: null,
             },
-            window_width: window.innerWidth,
         };
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
-        this.handleWindowSizeChange = this.handleWindowSizeChange.bind(this);
         this.changeEvent = this.changeEvent.bind(this);
         this.changeWCAId = this.changeWCAId.bind(this);
         this.loadMoreHistory = this.loadMoreHistory.bind(this);
@@ -105,8 +102,6 @@ class Timer extends React.PureComponent<{}, Model> {
 
         document.addEventListener("keydown", this.handleKeyDown);
         document.addEventListener("keyup", this.handleKeyUp);
-
-        window.addEventListener('resize', this.handleWindowSizeChange);
     }
 
     public componentWillUnmount() {
@@ -115,8 +110,6 @@ class Timer extends React.PureComponent<{}, Model> {
 
         document.removeEventListener("keydown", this.handleKeyDown);
         document.removeEventListener("keyup", this.handleKeyUp);
-
-        window.removeEventListener('resize', this.handleWindowSizeChange);
 
         // stop listening to any firestore docs
         for (var unsub_func of this.state.cur_event_listeners) {
@@ -698,121 +691,80 @@ class Timer extends React.PureComponent<{}, Model> {
         })
     }
 
-    private handleWindowSizeChange() {
-        this.setState({
-            window_width: window.innerWidth,
-        });
-    }
-
     public render() {
-        const is_mobile = this.state.window_width <= 500;
-        if (!is_mobile) {
-            return (
-                <section className="flex items-start justify-between w-100 overflow-hidden vh-100">
-                    <div className="flex flex-column vh-100 justify-between w-25 outline">
-                        <div className="outline">
-                            <EventPicker
-                                onChange={this.changeEvent}
-                                isDisabled={this.state.phase.name !== "waiting"}
-                            />
-                            <StatsCard
-                                event={this.state.current_event}
-                                stats={this.state.stats}
-                                inspect_func={this.inspect_avg}
-                            />
-                        </div>
-                        <HistoryCard
-                            hist={this.state.history}
-                            load_more_func={this.loadMoreHistory}
-                            inspect_func={this.inspect_avg}
-                        />
-                    </div>
-
-                    <div className="flex flex-column justify-between vh-100 w-50 outline">
-                        {
-                            this.state.inspect_avg === undefined
-                            ?
-                            <React.Fragment>
-                                <ScrambleText
-                                    scramble={this.state.scramble}
-                                    event={this.state.current_event}
-                                />
-                                <TimerDisplay
-                                    ms={this.state.elapsed}
-                                    phase={this.state.phase}
-                                    pen={this.state.penalty}
-                                />
-                                <div>
-                                    <ScoreCard
-                                        times={this.state.bucket}
-                                        edit_fn={this.toggle_last_penalty}
-                                        delete_fn={this.delete_last_time}
-                                        avg_size={this.state.current_event.avg_size}
-                                    />
-                                    <WCACard
-                                        event={this.state.current_event}
-                                        wca_id={this.state.wca_id}
-                                        home_times={this.all_times_raw_array()}
-                                    />
-                                </div>
-                            </React.Fragment>
-                            :
-                            <React.Fragment>
-                                <HistoryDetail
-                                    avg_id={this.state.inspect_avg}
-                                    avg_json={this.state.history[this.state.inspect_avg]}
-                                    delete_func={this.delete_avg}
-                                    close_func={this.uninspect_avg}
-                                />
-                            </React.Fragment>
-                        }
-                    </div>
-
-                    <div className="flex flex-column-reverse vh-100 justify-between w-25 outline">
-                        <div>
-                            <SettingsCard
-                                wca_id={this.state.wca_id}
-                                id_change_handler={this.changeWCAId}
-                            />
-                            <SignInForm user={this.state.user} />
-                        </div>
-                    </div>
-                </section>
-            );
-        } else { // mobile UI
-            return (
-                <section className="flex flex-column justify-between w-100 vh-100">
-                    <div className="w-100 outline">
+        return (
+            <section className="flex-wrap items-start justify-between overflow-hidden-ns vh-100">
+                <div className="flex flex-column vh-100 justify-between w-25 outline">
+                    <div className="outline">
                         <EventPicker
                             onChange={this.changeEvent}
                             isDisabled={this.state.phase.name !== "waiting"}
                         />
-                        <ScrambleText
-                            scramble={this.state.scramble}
+                        <StatsCard
                             event={this.state.current_event}
+                            stats={this.state.stats}
+                            inspect_func={this.inspect_avg}
                         />
                     </div>
+                    <HistoryCard
+                        hist={this.state.history}
+                        load_more_func={this.loadMoreHistory}
+                        inspect_func={this.inspect_avg}
+                    />
+                </div>
 
-                    <div className="w-100 outline">
-                        <TimerDisplay
-                            ms={this.state.elapsed}
-                            phase={this.state.phase}
-                            pen={this.state.penalty}
-                        />
-                    </div>
+                <div className="flex flex-column justify-between vh-100 w-50 outline">
+                    {
+                        this.state.inspect_avg === undefined
+                        ?
+                        <React.Fragment>
+                            <ScrambleText
+                                scramble={this.state.scramble}
+                                event={this.state.current_event}
+                            />
+                            <TimerDisplay
+                                ms={this.state.elapsed}
+                                phase={this.state.phase}
+                                pen={this.state.penalty}
+                            />
+                            <ScoreCard
+                                times={this.state.bucket}
+                                edit_fn={this.toggle_last_penalty}
+                                delete_fn={this.delete_last_time}
+                                avg_size={this.state.current_event.avg_size}
+                            />
+                            <WCACard
+                                event={this.state.current_event}
+                                wca_id={this.state.wca_id}
+                                home_times={this.all_times_raw_array()}
+                            />
+                        </React.Fragment>
+                        :
+                        <React.Fragment>
+                            <HistoryDetail
+                                avg_id={this.state.inspect_avg}
+                                avg_json={this.state.history[this.state.inspect_avg]}
+                                delete_func={this.delete_avg}
+                                close_func={this.uninspect_avg}
+                            />
+                        </React.Fragment>
+                    }
+                </div>
 
-                    <div className="w-100 outline">
-                        <ScoreCard
-                            times={this.state.bucket}
-                            edit_fn={this.toggle_last_penalty}
-                            delete_fn={this.delete_last_time}
-                            avg_size={this.state.current_event.avg_size}
-                        />
-                        <SignInForm user={this.state.user} />
+                <div className="flex flex-column vh-100 justify-between w-25 outline">
+                    <div id="scramble_image"
+                         className="outline tc"
+                         dangerouslySetInnerHTML={this.state.scramble_img}
+                    >
                     </div>
-                </section>
-            );
-        }
+                    <SettingsCard
+                        wca_id={this.state.wca_id}
+                        id_change_handler={this.changeWCAId}
+                    />
+                    <SignInForm user={this.state.user} />
+                </div>
+            </section>
+        );
 
     }
 }

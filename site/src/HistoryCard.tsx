@@ -34,7 +34,7 @@ class HistoryCard extends React.PureComponent<Props, {}> {
 
     public render() {
         return (
-            <div className="overflow-auto">
+            <div className="dn db-ns overflow-auto">
                 <ul className="list pl0 mv0">
                     {
                         this.hist_to_list_items(this.props.hist)
