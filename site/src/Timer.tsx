@@ -431,6 +431,7 @@ class Timer extends React.PureComponent<{}, Model> {
                                             .doc(this.state.current_event.wca_db_str);
             current_event_doc
                 .collection("Avgs")
+                .where("avg", ">", -1)
                 .orderBy("avg", "asc")
                 .limit(1)
                 .get()
@@ -779,11 +780,6 @@ class Timer extends React.PureComponent<{}, Model> {
                 </div>
 
                 <div className="flex flex-column vh-100 justify-between w-25 outline">
-                    <div id="scramble_image"
-                         className="outline tc"
-                         dangerouslySetInnerHTML={this.state.scramble_img}
-                    >
-                    </div>
                     <SettingsCard
                         wca_id={this.state.wca_id}
                         id_change_handler={this.changeWCAId}

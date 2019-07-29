@@ -4,6 +4,8 @@
 //                See www.qqtimer.net                   //
 //////////////////////////////////////////////////////////
 
+// import * as image from "./image.js";
+// importScripts("./image.js");
 
 // Performance is better if we only init the random-state scramblers once each
 var initonce333 = 1;
@@ -14,6 +16,10 @@ var cubesuff = ["","2","'"];
 function getScramble(shortname) {
     if (shortname === "222") {
         return get2x2optscramble(9);
+        // const scram = get2x2optscramble(9);
+        // execFunc($("#scrimg"));
+        // console.log(genImage(['222', scram]));
+        // return scram;
     } else if (shortname === "333" || shortname === "333oh" || shortname === "333bf") {
         if (initonce333 === 1) {
             scramblers['333'].initialize(null, Math);
