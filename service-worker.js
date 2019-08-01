@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/cubing-timer/precache-manifest.2ccca93a6d65af6c8d11d7541ab0c77a.js"
+  "/cubing-timer/precache-manifest.6de9dec385251af487caae827f6c5364.js"
 );
 
 workbox.clientsClaim();
