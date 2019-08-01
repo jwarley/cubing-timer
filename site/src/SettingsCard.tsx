@@ -31,21 +31,21 @@ class SettingsCard extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <div className="outline">
+            <div className="outline" id="event_sel">
                 <div className="f5 b small-caps tc">Settings</div>
-                
+
                 <form className="pa1 black-80" onSubmit={this.submitWCAId}>
-                  <div className="measure">
-                    <label className="f6 b db mb2">WCA ID</label>
-                    <input 
-                        id="name"
-                        className="input-reset ba b--black-20 pa2 mb2 db w-100"
-                        type="text"
-                        onChange={this.updateFormContent}
-                        value={this.state.wca_id}
-                    />
-                    <input type="submit" value="Set" />
-                  </div>
+                    <div className="measure">
+                        <label className="f6 b db mb2">WCA ID</label>
+                        <input
+                            id="name"
+                            className="input-reset ba b--black-20 pa2 mb2 db w-100"
+                            type="text"
+                            onChange={this.updateFormContent}
+                            value={this.state.wca_id}
+                        />
+                        <input type="submit" value="Set" />
+                    </div>
                 </form>
             </div>
         );

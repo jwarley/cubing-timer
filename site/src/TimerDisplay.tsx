@@ -17,7 +17,6 @@ function inspPenalty(time: number): Penalty | undefined {
     return pen;
 }
 
-
 // pretty-print an ms value as an inspection time
 function msToInspString(ms: number): string {
     if (ms >= 17000) {
@@ -94,7 +93,6 @@ interface Props {
 }
 
 class TimerDisplay extends React.Component<Props, {}> {
-
     public render() {
         // Set the color of the timer
         let colorClass = "black";
@@ -120,12 +118,9 @@ class TimerDisplay extends React.Component<Props, {}> {
         } else {
             timeString = msToString(this.props.ms);
         }
-        return <div className={"tc f1 code outline " + colorClass}>{timeString}</div>;
+        return <p className={"w-100 tc f1 code " + colorClass}>{timeString}</p>;
     }
 }
 
 // export default TimerDisplay;
-export {
-    inspPenalty,
-    TimerDisplay,
-}
+export { inspPenalty, TimerDisplay };
