@@ -1,0 +1,11 @@
+{
+  "main.js": "/cubing-timer/static/js/main.3ec40e50.chunk.js",
+  "main.js.map": "/cubing-timer/static/js/main.3ec40e50.chunk.js.map",
+  "static/js/1.15173f87.chunk.js": "/cubing-timer/static/js/1.15173f87.chunk.js",
+  "static/js/1.15173f87.chunk.js.map": "/cubing-timer/static/js/1.15173f87.chunk.js.map",
+  "runtime~main.js": "/cubing-timer/static/js/runtime~main.d9a25f19.js",
+  "runtime~main.js.map": "/cubing-timer/static/js/runtime~main.d9a25f19.js.map",
+  "index.html": "/cubing-timer/index.html",
+  "precache-manifest.6de9dec385251af487caae827f6c5364.js": "/cubing-timer/precache-manifest.6de9dec385251af487caae827f6c5364.js",
+  "service-worker.js": "/cubing-timer/service-worker.js"
+}
