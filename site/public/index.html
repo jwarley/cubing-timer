@@ -20,6 +20,18 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      var noSleep = new NoSleep();
+
+      function enableNoSleep() {
+        noSleep.enable();
+        document.removeEventListener("touchstart", enableNoSleep, false);
+      }
+
+      // Enable wake lock.
+      // (must be wrapped in a user input event handler e.g. a mouse or touch handler)
+      document.addEventListener("touchstart", enableNoSleep, false);
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
