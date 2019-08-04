@@ -21,15 +21,26 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script type="text/javascript">
-      $.fn.extend({ 
-        disableSelection : function() { 
-                this.each(function() { 
-                        this.onselectstart = function() { return false; }; 
-                        this.unselectable = "on"; 
-                        $(this).css('-moz-user-select', 'none'); 
-                        $(this).css('-webkit-user-select', 'none'); 
-                }); 
-        } 
+      $(document).ready(function() {
+        $('.noselect').disableSelection();
+      }); 
+      // Deactivating distracting Text Selection:
+      // from: http://stackoverflow.com/questions/1794220/how-to-disable-mobilesafari-auto-selection
+      $.fn.extend({
+        disableSelection: function() {
+          this.each(function() {
+            this.onselectstart = function() {
+              return false;
+            };
+            this.unselectable = "on";
+            $(this).css("-moz-user-select", "none");
+            $(this).css("-webkit-user-select", "none");
+          });
+        },
+      });
+
+      $(function() {
+        $(this).disableSelection();
       });
     </script>
     <div id="root"></div>
