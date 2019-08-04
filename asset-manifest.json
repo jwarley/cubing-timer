@@ -6,6 +6,6 @@
   "runtime~main.js": "/cubing-timer/static/js/runtime~main.d9a25f19.js",
   "runtime~main.js.map": "/cubing-timer/static/js/runtime~main.d9a25f19.js.map",
   "index.html": "/cubing-timer/index.html",
-  "precache-manifest.2ca3681a8bc8060578ebe3d9d324cf5d.js": "/cubing-timer/precache-manifest.2ca3681a8bc8060578ebe3d9d324cf5d.js",
+  "precache-manifest.ef2a90e029bc12c860c6116113ed4863.js": "/cubing-timer/precache-manifest.ef2a90e029bc12c860c6116113ed4863.js",
   "service-worker.js": "/cubing-timer/service-worker.js"
 }
