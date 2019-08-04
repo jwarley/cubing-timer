@@ -106,6 +106,10 @@ class Timer extends React.PureComponent<{}, Model> {
         document.addEventListener("touchend", this.handleTouchEnd);
 
         window.addEventListener("resize", this.handleWindowSizeChange);
+
+        document.addEventListener("selectstart", () => {
+            return false;
+        });
     }
 
     public componentWillUnmount() {
@@ -115,6 +119,10 @@ class Timer extends React.PureComponent<{}, Model> {
         document.removeEventListener("keyup", this.handleKeyUp);
 
         window.removeEventListener("resize", this.handleWindowSizeChange);
+
+        document.addEventListener("selectstart", () => {
+            return false;
+        });
 
         // stop listening to any firestore docs
         for (var unsub_func of this.state.cur_event_listeners) {
