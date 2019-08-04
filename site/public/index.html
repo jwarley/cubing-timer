@@ -10,6 +10,7 @@
     <script type="text/javascript" src="scramble_333.js"></script>
     <script type="text/javascript" src="scramble_sq1.js"></script>
     <script type="text/javascript" src="scrambler.js"></script>
+    <script type="text/javascript" src="jquery.min.js"></script>
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -19,6 +20,18 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script type="text/javascript">
+      $.fn.extend({ 
+        disableSelection : function() { 
+                this.each(function() { 
+                        this.onselectstart = function() { return false; }; 
+                        this.unselectable = "on"; 
+                        $(this).css('-moz-user-select', 'none'); 
+                        $(this).css('-webkit-user-select', 'none'); 
+                }); 
+        } 
+      });
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
