@@ -10,7 +10,6 @@
     <script type="text/javascript" src="scramble_333.js"></script>
     <script type="text/javascript" src="scramble_sq1.js"></script>
     <script type="text/javascript" src="scrambler.js"></script>
-    <script type="text/javascript" src="NoSleep.min.js"></script>
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -20,19 +19,6 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <script>
-      var noSleep = new NoSleep();
-
-      function enableNoSleep() {
-        noSleep.enable();
-        alert("thing happen");
-        document.removeEventListener("touchstart", enableNoSleep, false);
-      }
-
-      // Enable wake lock.
-      // (must be wrapped in a user input event handler e.g. a mouse or touch handler)
-      document.addEventListener("touchstart", enableNoSleep, false);
-    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
