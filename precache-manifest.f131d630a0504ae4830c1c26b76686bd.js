@@ -12,7 +12,7 @@ self.__precacheManifest = [
     "url": "/cubing-timer/static/js/runtime~main.d9a25f19.js"
   },
   {
-    "revision": "fd52aa1a38cd447c13f448f018844fd5",
+    "revision": "bae31c10023fdef34d43854c4fdf14bf",
     "url": "/cubing-timer/index.html"
   }
 ];
