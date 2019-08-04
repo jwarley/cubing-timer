@@ -928,7 +928,7 @@ class Timer extends React.PureComponent<{}, Model> {
         } else {
             // mobile UI
             return (
-                <section className="flex flex-column justify-between w-100 vh-100 noselect">
+                <section className="flex flex-column justify-between w-100 vh-100">
                     <div className="w-100 outline">
                         <EventPicker
                             onChange={this.changeEvent}
