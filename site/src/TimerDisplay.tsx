@@ -118,7 +118,11 @@ class TimerDisplay extends React.Component<Props, {}> {
         } else {
             timeString = msToString(this.props.ms);
         }
-        return <p className={"w-100 tc f1 code " + colorClass}>{timeString}</p>;
+        return (
+            <p id={"timer_text"} className={"noselect w-100 tc f1 code " + colorClass}>
+                {timeString}
+            </p>
+        );
     }
 }
 

@@ -11,8 +11,9 @@
     "@types/react-select": "^2.0.11",
     "@types/victory": "^31.0.19",
     "firebase": "^6.2.2",
+    "firebase-functions": "^3.2.0",
     "firebaseui": "^4.0.0",
-    "gh-pages": "^2.1.0",
+    "gh-pages": "2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-firebaseui": "^3.1.2",
@@ -22,7 +23,7 @@
     "victory": "^32.3.0"
   },
   "scripts": {
-    "predeploy": "yarn run build",
+    "predeploy": "yarn build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -37,5 +38,6 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {}
 }

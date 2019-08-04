@@ -590,7 +590,10 @@ class Timer extends React.PureComponent<{}, Model> {
             let nextState: Model;
             switch (state.phase.name) {
                 case "waiting":
-                    if (event.target === document.getElementById("timer_main")) {
+                    if (
+                        event.target === document.getElementById("timer_main") ||
+                        event.target === document.getElementById("timer_text")
+                    ) {
                         nextState = {
                             ...state,
                             startTime: Date.now(),
@@ -929,7 +932,7 @@ class Timer extends React.PureComponent<{}, Model> {
                         />
                     </div>
 
-                    <div id="timer_main" className="vh-100">
+                    <div id="timer_main" className="vh-100 noselect">
                         <TimerDisplay
                             ms={this.state.elapsed}
                             phase={this.state.phase}
@@ -944,6 +947,12 @@ class Timer extends React.PureComponent<{}, Model> {
                             delete_fn={this.delete_last_time}
                             avg_size={this.state.current_event.avg_size}
                         />
+                        {/*                        <HistoryCard
+                            hist={{  }}
+                            load_more_func={this.loadMoreHistory}
+                            inspect_func={this.inspect_avg}
+                        />
+*/}{" "}
                         <SignInForm user={this.state.user} />
                     </div>
                 </section>
