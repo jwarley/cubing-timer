@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "b88a5232c90a2b875669",
-    "url": "/cubing-timer/static/js/main.b88a5232.chunk.js"
+    "revision": "cb03392e3ba560817a75",
+    "url": "/cubing-timer/static/js/main.cb03392e.chunk.js"
   },
   {
     "revision": "15173f87c5743aaf0870",
@@ -12,7 +12,7 @@ self.__precacheManifest = [
     "url": "/cubing-timer/static/js/runtime~main.d9a25f19.js"
   },
   {
-    "revision": "3dafc96ee26c1bbec50f916d27e4fdd3",
+    "revision": "c2229df9fc87a4f724f3a71d1ba7e58b",
     "url": "/cubing-timer/index.html"
   }
 ];

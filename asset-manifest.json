@@ -1,11 +1,11 @@
 {
-  "main.js": "/cubing-timer/static/js/main.b88a5232.chunk.js",
-  "main.js.map": "/cubing-timer/static/js/main.b88a5232.chunk.js.map",
+  "main.js": "/cubing-timer/static/js/main.cb03392e.chunk.js",
+  "main.js.map": "/cubing-timer/static/js/main.cb03392e.chunk.js.map",
   "static/js/1.15173f87.chunk.js": "/cubing-timer/static/js/1.15173f87.chunk.js",
   "static/js/1.15173f87.chunk.js.map": "/cubing-timer/static/js/1.15173f87.chunk.js.map",
   "runtime~main.js": "/cubing-timer/static/js/runtime~main.d9a25f19.js",
   "runtime~main.js.map": "/cubing-timer/static/js/runtime~main.d9a25f19.js.map",
   "index.html": "/cubing-timer/index.html",
-  "precache-manifest.c55a4635b39121b7a047a32b4729b971.js": "/cubing-timer/precache-manifest.c55a4635b39121b7a047a32b4729b971.js",
+  "precache-manifest.fa4e45cda5ece49e4c5923825cc89b90.js": "/cubing-timer/precache-manifest.fa4e45cda5ece49e4c5923825cc89b90.js",
   "service-worker.js": "/cubing-timer/service-worker.js"
 }
