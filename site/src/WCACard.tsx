@@ -22,7 +22,7 @@ class WCACard extends React.PureComponent<Props, State> {
     }
 
     componentDidMount() {
-        const WCA_API_PREFIX = "http://www.worldcubeassociation.org/api/v0/persons/"
+        const WCA_API_PREFIX = "https://www.worldcubeassociation.org/api/v0/persons/"
 
         this.maybe_get_wca_pb= this.maybe_get_wca_pb.bind(this);
 
@@ -36,7 +36,7 @@ class WCACard extends React.PureComponent<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        const WCA_API_PREFIX = "http://www.worldcubeassociation.org/api/v0/persons/"
+        const WCA_API_PREFIX = "https://www.worldcubeassociation.org/api/v0/persons/"
 
         if (this.props.event !== prevProps.event || this.props.wca_id !== prevProps.wca_id) {
             fetch(WCA_API_PREFIX + this.props.wca_id)

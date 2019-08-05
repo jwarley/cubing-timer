@@ -10,6 +10,8 @@ var initonce333 = 1;
 var initoncesq1 = 1;
 
 var cubesuff = ["","2","'"];
+var moves_444 = moves_555 = [["U","D","Uw", "Dw"],["R","L","Rw", "Lw"],["F","B","Fw", "Bw"]];
+var moves_666 = moves_777 = [["U","D","Uw","Dw","3Uw","3Dw"],["R","L","Rw","Lw","3Rw","3Lw"],["F","B","Fw","Bw","3Fw","3Bw"]];
 
 function getScramble(shortname) {
     if (shortname === "222") {
@@ -30,13 +32,13 @@ function getScramble(shortname) {
                                 // to prevent line breaks in the middle of a pair
                                 .replace("/\, /g", ",&nbsp");
     } else if (shortname === "444fast") {
-        return megascramble([["U","D","Uw"],["R","L","Rw"],["F","B","Fw"]], cubesuff, 40);
+        return megascramble(moves_444, cubesuff, 40);
     } else if (shortname === "555") {
-        return megascramble([["U","D","Uw"],["R","L","Rw"],["F","B","Fw"]], cubesuff, 60);
+        return megascramble(moves_555, cubesuff, 60);
     } else if (shortname === "666") {
-        return megascramble([["U","D","Uw"],["R","L","Rw"],["F","B","Fw"]], cubesuff, 80);
+        return megascramble(moves_666, cubesuff, 80);
     } else if (shortname === "777") {
-        return megascramble([["U","D","Uw"],["R","L","Rw"],["F","B","Fw"]], cubesuff, 100);
+        return megascramble(moves_777, cubesuff, 100);
     } else if (shortname === "pyram") {
         return getpyraoptscramble(8);
     } else if (shortname === "minx") {
