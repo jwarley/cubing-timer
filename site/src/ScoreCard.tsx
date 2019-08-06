@@ -1,5 +1,5 @@
 import * as React from "react";
-import { timeToString } from "./Util";
+import { timeToString, bucketToJsonAvg, rawTimeToString } from "./Util";
 import { Time, Penalty } from "./Types";
 
 
@@ -47,12 +47,20 @@ class ScoreCard extends React.PureComponent<Props, {}> {
             );
         }
 
+        // Display the avg. if it's done
+        let avg_str = "--";
+        if (this.props.times.length === this.props.avg_size) {
+            avg_str = rawTimeToString(bucketToJsonAvg(this.props.times).avg);
+        }
         return (
-            <div className="center mw5">
-                <h1 className="f5 small-caps">Current Average</h1>
-                <ul className="list pl0 ml0 ba b--light-silver br1">{rows}</ul>
+            <div className="center w-90 pt1">
+                <span className="f5 b small-caps">Current Average:</span>
+                <span className="f5"> {avg_str}</span>
+                <ul className="list ph0 ml0 ba b--light-silver br1">{rows}</ul>
             </div>
         );
+                // <h1 className="f5 small-caps">Current Average:</h1>
+                // <span className="f5"> {avg_str}</span>
     }
 }
 

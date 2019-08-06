@@ -869,6 +869,12 @@ class Timer extends React.PureComponent<{}, Model> {
                                 inspect_func={this.inspect_avg}
                             />
                         </div>
+                        <ScoreCard
+                            times={this.state.bucket}
+                            edit_fn={this.toggle_last_penalty}
+                            delete_fn={this.delete_last_time}
+                            avg_size={this.state.current_event.avg_size}
+                        />
                         <HistoryCard
                             hist={this.state.history}
                             load_more_func={this.loadMoreHistory}
@@ -889,12 +895,6 @@ class Timer extends React.PureComponent<{}, Model> {
                                     pen={this.state.penalty}
                                 />
                                 <div>
-                                    <ScoreCard
-                                        times={this.state.bucket}
-                                        edit_fn={this.toggle_last_penalty}
-                                        delete_fn={this.delete_last_time}
-                                        avg_size={this.state.current_event.avg_size}
-                                    />
                                     <WCACard
                                         event={this.state.current_event}
                                         wca_id={this.state.wca_id}

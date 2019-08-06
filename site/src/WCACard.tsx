@@ -1,6 +1,7 @@
 import * as React from "react";
 import { VictoryChart, VictoryLine, VictoryArea } from "victory";
 import { Event } from "./Types";
+import { rawTimeToString } from "./Util";
 
 interface Props {
     event: Event;
@@ -113,7 +114,7 @@ class WCACard extends React.PureComponent<Props, State> {
                             }}
                         />
                         <VictoryLine
-                            labels={[this.state.wca_pb]}
+                            labels={[rawTimeToString(this.state.wca_pb)]}
                             style={{
                                 data: {
                                     stroke: "#ff0000"
