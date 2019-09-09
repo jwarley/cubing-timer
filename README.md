@@ -15,11 +15,12 @@ Timers may help narrow this gap by better evoking the competition workflow/minds
 * Event switching
 * Saving times
 * PB Stats
+* History view/deletion
 * WCA interface (sort of)
+* Mobile (limited)
 
 ### What doesn't:
 * Scramble images
-* Mobile
 * Automatic sessions (?)
 * Looking nice
 
